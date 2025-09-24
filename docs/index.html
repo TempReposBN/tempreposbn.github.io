@@ -49,6 +49,30 @@
       isolation: isolate
     }
 
+    .stage::before,
+    .stage::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 25vw;
+      /* how wide the fade columns are */
+      z-index: 3;
+      /* above video/nodes, but below nav/hero */
+      pointer-events: none;
+      /* let clicks through */
+    }
+
+    .stage::before {
+      left: 0;
+      background: linear-gradient(to right, rgba(0, 0, 0, 0.9), transparent);
+    }
+
+    .stage::after {
+      right: 0;
+      background: linear-gradient(to left, rgba(0, 0, 0, 0.9), transparent);
+    }
+
     .bg-video {
       position: absolute;
       inset: 0;
@@ -363,7 +387,7 @@
 
     .node:hover .node-menu {
       opacity: 1;
-      transform: translateX(-50%) translateY(0) scale(0.75);
+      transform: translateX(-50%) translateY(0) scale(1);
     }
 
     .node-menu.below {
@@ -387,6 +411,78 @@
         stroke-dasharray: none
       }
     }
+
+    /* ===== Contact Bar (top-left) ===== */
+    .contact-bar {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(10, 10, 20, 0.75), rgba(10, 10, 20, 0.65));
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, .16);
+      z-index: 50;
+      /* same layer as nav */
+    }
+
+    /* Each icon button (placeholder by default) */
+    .contact-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: var(--glass);
+      border: 1px solid rgba(255, 255, 255, .25);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
+      transition: transform .15s ease, filter .2s ease, background .2s ease;
+      text-decoration: none;
+    }
+
+    /* Placeholder glyph (shows when no <svg> child is provided) */
+    .contact-btn::before {
+      content: "";
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      background: radial-gradient(circle at 30% 30%,
+          rgba(255, 255, 255, .95) 0 38%,
+          rgba(205, 226, 255, .9) 40% 60%,
+          rgba(127, 186, 255, .95) 62% 100%);
+      filter: saturate(.8);
+      opacity: .95;
+    }
+
+    /* If you add a real SVG later, it will auto-replace the placeholder */
+    .contact-btn svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+      fill: #eaf1ff;
+      opacity: .95;
+    }
+
+    /* Hover niceties */
+    .contact-btn:hover {
+      background: var(--glass-bright);
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    /* Mobile: collapse to a row so it doesn't clash with the centered nav */
+    @media (max-width: 560px) {
+      .contact-bar {
+        flex-direction: row;
+        padding: 8px;
+        gap: 8px;
+        top: 12px;
+        left: 12px;
+      }
+    }
   </style>
 </head>
 
@@ -400,7 +496,7 @@
       <a href="#research">Research</a>
       <a href="#projects">Projects</a>
       <a href="#publications">Publications</a>
-      <a href="#contact">Contact</a>
+      <a href="#aboutme">About Me!</a>
     </nav>
 
     <!-- Hero -->
@@ -442,6 +538,16 @@
     <div class="node" data-link="#contact" data-label="Contact" data-ax="61" data-ay="25"></div>
     <div class="node" data-link="#aboutme" data-label="About Me" data-ax="70" data-ay="45"></div>
 
+    <!-- Contact bar (top-left) -->
+    <div class="contact-bar" aria-label="Contact links">
+      <a class="contact-btn" href="LinkedIn_logo.png" aria-label="Email" title="Email"></a>
+      <a class="contact-btn" href="https://www.linkedin.com/in/liu-yuanwei-764827220" target="_blank" title="LinkedIn">
+        <img src="LinkedIn_logo.png" alt="LinkedIn">
+      </a>
+      <a class="contact-btn" href="#" aria-label="GitHub" title="GitHub"></a>
+      <a class="contact-btn" href="#" aria-label="Google Scholar" title="Google Scholar"></a>
+      <a class="contact-btn" href="#" aria-label="Twitter/X" title="Twitter/X"></a>
+    </div>
 
     <div class="footer">© <span id="y"></span> Eric Liu • Made with HTML/CSS/JS</div>
   </div>
@@ -457,7 +563,7 @@
       const nodes = Array.from(stage.querySelectorAll('.node'));
 
       // Slow the background video gently
-      function setPlaybackSpeed() { try { bg.playbackRate = 0.2 } catch { } }
+      function setPlaybackSpeed() { try { bg.playbackRate = 0.8 } catch { } }
       bg.addEventListener('loadedmetadata', setPlaybackSpeed, { once: true });
       bg.addEventListener('canplay', () => { setPlaybackSpeed(); const p = bg.play(); if (p?.then) p.catch(() => { }); }, { once: true });
 
