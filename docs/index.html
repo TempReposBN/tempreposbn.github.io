@@ -1,11 +1,565 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Welcome</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eric Liu — Neural Systems</title>
+
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #000;
+      --text: #f3f6ff;
+      --muted: #cdd7ff;
+      --brand: #4da3ff;
+      --glass: rgba(255, 255, 255, .08);
+      --glass-bright: rgba(255, 255, 255, .12);
+      --node-size: 40px;
+      --hover-scale: 2.5;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, Helvetica, sans-serif;
+      line-height: 1.45;
+    }
+
+    /* ===== Layers ===== */
+    .stage {
+      position: relative;
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      isolation: isolate
+    }
+
+    .bg-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+      pointer-events: none;
+      filter: brightness(1);
+    }
+
+
+    /* Top nav */
+    .nav {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 35px;
+      align-items: center;
+      padding: 10px 16px;
+      border-radius: 16px;
+      background: linear-gradient(180deg,
+          rgba(10, 10, 20, 0.75),
+          /* top */
+          rgba(10, 10, 20, 0.65));
+      /* bottom */
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, .16);
+      z-index: 50;
+      /* above everything */
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: .3px;
+      margin-right: 8px;
+      background: linear-gradient(90deg, #cfe3ff, #79b8ff, #4da3ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 20px rgba(77, 163, 255, .25);
+    }
+
+    .nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: .95rem;
+      padding: 6px 10px;
+      border-radius: 10px
+    }
+
+    .nav a:hover {
+      background: var(--glass-bright);
+      color: #dfe7ff
+    }
+
+    .hero {
+      position: absolute;
+      bottom: 10vh;
+      /* keep ~12% gap from bottom */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      z-index: 5;
+    }
+
+    .card {
+      --card-bg-top: rgba(8, 10, 18, .82);
+      --card-bg-bot: rgba(8, 10, 18, .72);
+      --card-br: 26px;
+
+      position: relative;
+      max-width: min(1200px, 96vw);
+      padding: clamp(18px, 3vw, 36px) clamp(18px, 4vw, 44px);
+      border-radius: var(--card-br);
+      background: linear-gradient(180deg, var(--card-bg-top), var(--card-bg-bot));
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+
+      border: 2px solid rgba(255, 255, 255, .18);
+      /* subtle inner highlight + deeper drop */
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .08),
+        0 24px 70px rgba(0, 0, 0, .55);
+      text-align: center
+    }
+
+    /* tiny animated shimmer on the ring (subtle) */
+    @keyframes ringGlow {
+      0% {
+        opacity: .38
+      }
+
+      50% {
+        opacity: .55
+      }
+
+      100% {
+        opacity: .38
+      }
+    }
+
+    .card::before {
+      animation: ringGlow 6s ease-in-out infinite;
+    }
+
+    /* Title: bigger, tighter tracking, soft glow */
+    .title {
+      margin: 0 0 .35rem;
+      font-size: clamp(30px, 6.2vw, 60px);
+      font-weight: 800;
+      letter-spacing: .1px;
+      line-height: 1.05;
+      background: linear-gradient(180deg, #fff, #dfe9ff 70%, #a7baff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 6px 28px rgba(87, 140, 255, .18);
+    }
+
+    /* Optional accent underline under title */
+    .title::after {
+      content: "";
+      display: block;
+      width: min(120px, 18%);
+      height: 3px;
+      margin: .6rem auto 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #7fbaff, #4da3ff);
+      opacity: .75;
+    }
+
+    /* Subtitle: narrower measure + higher contrast for readability */
+    .subtitle {
+      margin: .85rem auto 0;
+      max-width: 75ch;
+      color: #e7edff;
+      /* brighter than muted */
+      opacity: .92;
+      font-size: clamp(16px, 2.2vw, 19px);
+      line-height: 1.6;
+    }
+
+    /* Button row (if you add CTAs later) */
+    .cta {
+      gap: 14px;
+      margin-top: clamp(14px, 2.2vw, 22px);
+    }
+
+    .btn {
+      padding: 12px 18px;
+      border-radius: 12px;
+    }
+
+    /* Mobile niceties */
+    @media (max-width: 560px) {
+      .card {
+        padding: 18px 16px 22px;
+      }
+
+      .title::after {
+        width: 96px;
+      }
+    }
+
+    .btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px)
+    }
+
+    .btn.ghost {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, .35);
+      box-shadow: none
+    }
+
+    .btn.ghost:hover {
+      background: rgba(255, 255, 255, .12)
+    }
+
+    /* Footer */
+    .footer {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #c5d2ffb0;
+      font-size: 12px;
+      letter-spacing: .2px;
+      background: var(--glass);
+      padding: 6px 10px;
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, .14);
+      z-index: 5
+    }
+
+    /* ===== Wires (SVG) ===== */
+    .wires {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1
+    }
+
+    .wire {
+      stroke: url(#wireGradient);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-opacity: .55;
+      filter: url(#wireGlow);
+      stroke-dasharray: 10 14;
+      animation: dash 14s linear infinite;
+    }
+
+    @keyframes dash {
+      to {
+        stroke-dashoffset: -400
+      }
+    }
+
+    /* ===== Nodes ===== */
+    .node {
+      position: absolute;
+      z-index: 2;
+      width: var(--node-size);
+      height: var(--node-size);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, .95) 0 38%,
+          rgba(255, 200, 80, .9) 40% 60%,
+          rgba(255, 140, 0, .95) 62% 100%);
+      box-shadow:
+        inset 0 -5px 10px rgba(0, 0, 0, .35),
+        inset 0 6px 8px rgba(255, 255, 255, .25),
+        0 0 12px rgba(255, 170, 60, .55),
+        0 0 28px rgba(255, 140, 0, .35);
+      transform: translate(var(--tx, 0), var(--ty, 0)) scale(var(--scale, 1));
+      transition: transform .25s ease, box-shadow .35s ease;
+      cursor: pointer;
+      animation: hueShift var(--spinDur, 16s) linear infinite;
+      filter: hue-rotate(var(--hStart, 0deg));
+    }
+
+    .node::before {
+      content: "";
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 170, 60, .22), transparent 50%);
+      filter: blur(16px);
+      opacity: .7;
+      animation: halo 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes halo {
+      from {
+        opacity: .45;
+        transform: scale(1)
+      }
+
+      to {
+        opacity: .9;
+        transform: scale(1.15)
+      }
+    }
+
+    .node:hover {
+      --scale: var(--hover-scale);
+      box-shadow:
+        inset 0 -5px 10px rgba(0, 0, 0, .35),
+        inset 0 8px 10px rgba(255, 255, 255, .3),
+        0 0 18px rgba(255, 200, 80, .85),
+        0 0 36px rgba(255, 150, 0, .65);
+    }
+
+    /* Tooltip label (auto flips if near top) */
+    .node-menu {
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 4px);
+      /* show BELOW the node */
+      padding: 4px 8px;
+      /* smaller padding */
+      border-radius: 8px;
+      /* tighter corners */
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px);
+      color: #fff;
+      font-size: 0.68rem;
+      /* smaller text */
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+      z-index: 3;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .1);
+      top: calc(100%+3);
+      /* 8px gap below the node */
+      bottom: auto;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .node:hover .node-menu {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0) scale(0.75);
+    }
+
+    .node-menu.below {
+      top: calc(100% + 10px);
+      bottom: auto
+    }
+
+    .node-menu a {
+      color: #e7edff;
+      text-decoration: none;
+    }
+
+    /* Motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      .node::before {
+        animation: none
+      }
+
+      .wire {
+        animation: none;
+        stroke-dasharray: none
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Hello, this is my site!</h1>
-  <p>Welcome to my first GitHub Pages site.</p>
+  <div class="stage vignette" id="stage">
+    <video id="bg" class="bg-video" src="main_bg.mp4" autoplay muted loop playsinline preload="auto"></video>
+
+    <!-- Top nav -->
+    <nav class="nav" aria-label="Primary">
+      <div class="brand">ERIC&nbsp;LIU</div>
+      <a href="#research">Research</a>
+      <a href="#projects">Projects</a>
+      <a href="#publications">Publications</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="card" role="banner">
+        <h1 class="title">Nice to meet you, I'm Eric!</h1>
+        <p class="subtitle">
+          I am a Biomedical Engineering graduate from NUS with highest distinction, specializing in neural systems,
+          gait analysis, and brain-computer interfaces. My research spans non-human primate spatial memory,
+          EEG/MEG signal processing, and wearable IMU-based motion sensing, and working on a publication in trajectory
+          estimation. Alongside academic work, I've contributed to projects at EPFL TNE Lab, NUS iHealthtech,
+          and NUS N.1 Lab and blending engineering in my daily projects.
+        </p>
+
+      </div>
+    </section>
+
+    <!-- Wires -->
+    <svg class="wires" id="wires" viewBox="0 0 600 400" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="wireGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
+          <stop offset="100%" stop-color="#cde2ff" stop-opacity="0.9" />
+        </linearGradient>
+        <filter id="wireGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2.2" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+    </svg>
+
+    <!-- Nodes (anchored as % inside the video) -->
+    <div class="node" data-link="#research" data-label="Research" data-ax="25" data-ay="45"></div>
+    <div class="node" data-link="#projects" data-label="Projects" data-ax="46" data-ay="44"></div>
+    <div class="node" data-link="#publications" data-label="Publications" data-ax="41" data-ay="20"></div>
+    <div class="node" data-link="#contact" data-label="Contact" data-ax="61" data-ay="25"></div>
+    <div class="node" data-link="#aboutme" data-label="About Me" data-ax="70" data-ay="45"></div>
+
+
+    <div class="footer">© <span id="y"></span> Eric Liu • Made with HTML/CSS/JS</div>
+  </div>
+
+  <script>
+    // Footer year
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    (function () {
+      const stage = document.getElementById('stage');
+      const bg = document.getElementById('bg');
+      const wires = document.getElementById('wires');
+      const nodes = Array.from(stage.querySelectorAll('.node'));
+
+      // Slow the background video gently
+      function setPlaybackSpeed() { try { bg.playbackRate = 0.2 } catch { } }
+      bg.addEventListener('loadedmetadata', setPlaybackSpeed, { once: true });
+      bg.addEventListener('canplay', () => { setPlaybackSpeed(); const p = bg.play(); if (p?.then) p.catch(() => { }); }, { once: true });
+
+      const R = el => el.getBoundingClientRect();
+
+      // ----- Build wire lines once
+      const lineEls = [];
+      function buildLines() {
+        wires.innerHTML = wires.innerHTML; // keep <defs>, clear old lines
+        for (let i = 0; i < nodes.length - 1; i++) {
+          const L = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          L.setAttribute('class', 'wire');
+          wires.appendChild(L);
+          lineEls.push(L);
+        }
+      }
+      buildLines();
+
+      // ----- Attach a single tooltip per node
+      nodes.forEach(n => {
+        const label = n.dataset.label; const link = n.dataset.link;
+        if (label && !n.querySelector('.node-menu')) {
+          const m = document.createElement('div');
+          m.className = 'node-menu';
+          m.innerHTML = link ? `<a href="${link}">${label}</a>` : label;
+          n.appendChild(m);
+        }
+        // Make whole node clickable
+        n.addEventListener('click', e => {
+          if (link) { window.location.hash = link; }
+        });
+      });
+
+      // ----- Drift profiles
+      const profiles = nodes.map(el => {
+        const r = 9 + Math.random() * 16;
+        const sp = 0.35 + Math.random() * 0.55;
+        return {
+          el,
+          rx: r, ry: r * (0.55 + Math.random() * 0.55),
+          speed: sp,
+          pX: Math.random() * Math.PI * 2,
+          pY: Math.random() * Math.PI * 2,
+          ax: parseFloat(el.dataset.ax) / 100,
+          ay: parseFloat(el.dataset.ay) / 100
+        };
+      });
+
+      function syncSvg() {
+        const s = R(stage);
+        wires.setAttribute('viewBox', `0 0 ${s.width} ${s.height}`);
+      }
+      addEventListener('resize', syncSvg, { passive: true });
+      syncSvg();
+
+      let t0 = null;
+      function tick(ts) {
+        if (!t0) t0 = ts;
+        const t = (ts - t0) / 1000;
+
+        const sRect = R(stage);
+        const vRect = R(bg);
+
+        // Position nodes with drift
+        profiles.forEach(p => {
+          const bx = vRect.left - sRect.left + p.ax * vRect.width;
+          const by = vRect.top - sRect.top + p.ay * vRect.height;
+
+          const dx = Math.cos(t * p.speed + p.pX) * p.rx;
+          const dy = Math.sin(t * (p.speed * 0.85) + p.pY) * p.ry;
+
+          const w = p.el.offsetWidth, h = p.el.offsetHeight;
+          p.el.style.left = (bx - w / 2) + 'px';
+          p.el.style.top = (by - h / 2) + 'px';
+          p.el.style.setProperty('--tx', dx.toFixed(2) + 'px');
+          p.el.style.setProperty('--ty', dy.toFixed(2) + 'px');
+
+          // Flip tooltip if too close to top
+          const menu = p.el.querySelector('.node-menu');
+          if (menu) {
+            const nr = R(p.el);
+            if (nr.top < 90) { menu.classList.add('below'); }
+            else { menu.classList.remove('below'); }
+          }
+        });
+
+        // Wire endpoints
+        const centers = nodes.map(n => {
+          const r = R(n);
+          return { x: r.left - sRect.left + r.width / 2, y: r.top - sRect.top + r.height / 2 };
+        });
+        for (let i = 0; i < lineEls.length; i++) {
+          const a = centers[i], b = centers[i + 1], L = lineEls[i];
+          L.setAttribute('x1', a.x); L.setAttribute('y1', a.y);
+          L.setAttribute('x2', b.x); L.setAttribute('y2', b.y);
+        }
+
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    })();
+  </script>
 </body>
+
 </html>
