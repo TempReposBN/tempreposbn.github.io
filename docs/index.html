@@ -1,922 +1,1636 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Eric Liu — Neural Systems</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Eric Liu — Neural Systems</title>
+    <!-- Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Inter font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg: #000;
+        --text: #f3f6ff;
+        --muted: #cdd7ff;
+        --brand: #4da3ff;
+        --glass: rgba(255, 255, 255, 0.08);
+        --glass-bright: rgba(255, 255, 255, 0.12);
+        --node-size: 40px;
+        --ring-alpha: 0.55;
+        /* translucency of the outer ring */
+        --halo-size: 18px;
+        /* how far the halo extends */
+        --halo-strength: 0.38;
+        /* overall halo opacity */
+        --hover-scale: 2.5;
+        --u: 1vmin;
+        --scale-cap: 1;
+        /* reduce to .95/.9 on tiny screens*/
+        --fs-title-min: 28px;
+        --fs-title-pref: calc(6.2 * var(--u));
+        --fs-title-max: 64px;
 
-  <style>
-    :root {
-      --bg: #000;
-      --text: #f3f6ff;
-      --muted: #cdd7ff;
-      --brand: #4da3ff;
-      --glass: rgba(255, 255, 255, .08);
-      --glass-bright: rgba(255, 255, 255, .12);
-      --node-size: 40px;
-      --ring-alpha: .55;          /* translucency of the outer ring */
-      --halo-size: 18px;          /* how far the halo extends */
-      --halo-strength: .38;       /* overall halo opacity */
-      --hover-scale: 2.5;
-      --u: 1vmin;
-      --scale-cap: 1; /* reduce to .95/.9 on tiny screens*/
-      --fs-title-min: 28px;
-      --fs-title-pref: calc(6.2 * var(--u));
-      --fs-title-max: 64px;
+        --fs-sub-min: 12px;
+        --fs-sub-pref: calc(2 * var(--u));
+        --fs-sub-max: 32px;
 
-      --fs-sub-min: 12px;
-      --fs-sub-pref: calc(2.0 * var(--u));
-      --fs-sub-max: 32px;
+        --fs-footer-min: 8.5px;
+        --fs-footer-pref: calc(1.2 * var(--u));
+        --fs-footer-max: 14px;
 
-      --fs-footer-min: 8.5px;
-      --fs-footer-pref: calc(1.2 * var(--u));
-      --fs-footer-max: 14px;
-      
-      --fs-nav-min: 11px;
-      --fs-nav-pref: calc(1.6 * var(--u));
-      --fs-nav-max: 18px;
-    }
+        --fs-nav-min: 11px;
+        --fs-nav-pref: calc(1.6 * var(--u));
+        --fs-nav-max: 18px;
+      }
 
-    * {
-      box-sizing: border-box
-    }
+      * {
+        box-sizing: border-box;
+      }
 
-    html,
-    body {
-      height: 100%
-    }
+      html,
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          Helvetica, sans-serif;
+        line-height: 1.45;
+        height: auto;
+        scroll-behavior: smooth;
+        scroll-snap-type: y mandatory;
+      }
 
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, Helvetica, sans-serif;
-      line-height: 1.45;
-    }
+      /* ===== Layers ===== */
+      .stage {
+        position: relative;
+        width: 100%;
+        /* height: 100dvh; */
+        /* overflow: hidden; */
+        isolation: isolate;
+        /* min-height: 100dvh; */
+        height: auto;
+        overflow: visible;
+        /* padding-block: calc(10 * var(--u)) calc(26 * var(--u)); */
+        scroll-snap-align: start;
+        min-height: 100svh;
+        /* new viewport unit, handles mobile UI chrome */
+        height: auto;
+        overflow: visible;
+        padding-block: clamp(10vh, 10 * var(--u), 14vh)
+          clamp(18vh, 26 * var(--u), 24vh);
+      }
 
-    /* ===== Layers ===== */
-    .stage {
-      position: relative;
-      width: 100%;
-      height: 100dvh;
-      overflow: hidden;
-      isolation: isolate
-    }
+      .stage::before,
+      .stage::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 25vw;
+        /* how wide the fade columns are */
+        z-index: 3;
+        /* above video/nodes, but below nav/hero */
+        pointer-events: none;
+        /* let clicks through */
+        width: calc(25 * var(--u));
+      }
 
-    .stage::before,
-    .stage::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 25vw;
-      /* how wide the fade columns are */
-      z-index: 3;
-      /* above video/nodes, but below nav/hero */
-      pointer-events: none;
-      /* let clicks through */
-      width: calc(25 * var(--u)); 
-    }
+      .stage::before {
+        left: 0;
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.9), transparent);
+      }
 
-    .stage::before {
-      left: 0;
-      background: linear-gradient(to right, rgba(0, 0, 0, 0.9), transparent);
-    }
+      .stage::after {
+        right: 0;
+        background: linear-gradient(to left, rgba(0, 0, 0, 0.9), transparent);
+      }
 
-    .stage::after {
-      right: 0;
-      background: linear-gradient(to left, rgba(0, 0, 0, 0.9), transparent);
-    }
+      .stage-edge {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: clamp(60px, 10vh, 160px);
+        pointer-events: none;
+        z-index: -1; /* above bg image/video (-2), below content */
+      }
 
-    .bg-video {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -2;
-      pointer-events: none;
-      filter: brightness(1);
-    }
+      .stage-edge--bottom {
+        bottom: -1px;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0) 0%,
+          rgba(0, 0, 0, 0.65) 60%,
+          rgba(0, 0, 0, 1) 100%
+        );
+      }
 
-    /* Top nav */
-    .nav {
-      position: fixed;
-      top: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      background: linear-gradient(180deg,
+      .stage-edge--top {
+        top: -1px;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 1) 0%,
+          rgba(0, 0, 0, 0.65) 40%,
+          rgba(0, 0, 0, 0) 100%
+        );
+      }
+
+      #stage .hero {
+        bottom: -50vh;
+      }
+
+      #stage-2 {
+        /* less top/bottom space */
+        padding-block: clamp(4vh, 6 * var(--u), 8vh)
+          clamp(6vh, 10 * var(--u), 10vh);
+        min-height: unset; /* don't force tall section */
+      }
+
+      #stage-2 .stage-edge {
+        /* shrink the top fade bar */
+        height: clamp(20px, 5vh, 40px);
+      }
+
+      #stage-2 .research-col {
+        /* tighter vertical rhythm inside columns */
+        gap: clamp(8px, 1.2vmin, 12px);
+      }
+
+      #stage-2 .tile {
+        transition: transform 0.25s ease, box-shadow 0.25s ease,
+          border-color 0.25s ease;
+        cursor: pointer;
+      }
+
+      #stage-2 .tile:hover {
+        transform: translateY(-6px) scale(1.1);
+        border-color: rgba(125, 175, 255, 0.4);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55),
+          0 0 12px rgba(77, 163, 255, 0.25); /* subtle blue glow */
+      }
+
+      #stage-2 .tile--pic {
+        /* slimmer picture tiles */
+        padding: clamp(6px, 0.8vmin, 8px);
+      }
+      #stage-2 .tile--text {
+        /* slimmer text tiles */
+        padding: clamp(10px, 1.2vmin, 12px);
+      }
+      #stage-2 .tile__title {
+        /* tuck title a bit */
+        margin: 0.2rem 0 0.15rem;
+      }
+
+      #stage-2 .hero {
+        bottom: auto;
+        left: auto;
+        transform: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
+
+      #stage-2 .hero .card {
+        padding: clamp(8px, 1vmin, 10px) clamp(12px, 2vmin, 16px);
+      }
+      /* Make the underline sit closer to the text */
+      #stage-2 .hero .title::after {
+        margin-top: 0.25rem; /* was 0.6rem */
+      }
+
+      #stage-3 .hero {
+        bottom: auto;
+        left: auto;
+        transform: none;
+        margin: 0 auto;
+        padding-bottom: 0;
+      }
+
+      #stage-2 .stage2-wrap {
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* center horizontally */
+        justify-content: flex-start;
+        gap: clamp(1.5vh, 3vh, 4vh);
+      }
+
+      #stage-2 .research-board {
+        width: min(1200px, 92vw);
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: clamp(24px, 3vmin, 36px);
+        align-items: start;
+        justify-items: stretch;
+      }
+
+      /* Responsive stacking still applies */
+      @media (max-width: 900px) {
+        #stage-2 .research-board {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 640px) {
+        #stage-2 .research-board {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ===== Stage 2: 3-column project board ===== */
+      .research-board {
+        width: min(1200px, 92vw);
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: clamp(14px, 2.2vmin, 22px);
+        align-items: start;
+        z-index: 5; /* over bg */
+      }
+
+      .research-col {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(12px, 2vmin, 18px);
+        /* optional stagger so columns aren’t perfectly aligned */
+        transform: translateY(var(--stagger, 0px));
+      }
+
+      .tile {
+        position: relative;
+        border-radius: calc(1.6 * var(--u));
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.82),
+          rgba(8, 10, 18, 0.72)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(0, 0, 0, 0.45);
+        overflow: hidden;
+        backdrop-filter: blur(calc(1.2 * var(--u)));
+        -webkit-backdrop-filter: blur(calc(1.2 * var(--u)));
+      }
+
+      /* picture tile */
+      .tile--pic {
+        padding: clamp(8px, 1.2vmin, 12px);
+      }
+      .tile--pic img,
+      .tile--pic video {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: calc(1.2 * var(--u));
+        object-fit: cover;
+      }
+
+      /* text tile */
+      .tile--text {
+        padding: clamp(14px, 2.2vmin, 18px);
+        color: #e7edff;
+      }
+      .tile__eyebrow {
+        font-weight: 800;
+        letter-spacing: 0.4px;
+        font-size: clamp(11px, 1.3vmin, 13px);
+        color: #cfe0ff;
+        opacity: 0.9;
+        text-transform: uppercase;
+      }
+      .tile__title {
+        margin: 0.35rem 0 0.25rem;
+        font-weight: 800;
+        font-size: clamp(18px, 2.1vmin, 22px);
+        background: linear-gradient(180deg, #fff, #dfe9ff 70%, #a7baff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .tile__meta {
+        font-size: clamp(11px, 1.35vmin, 13px);
+        color: #bcd0ff;
+        opacity: 0.9;
+        margin-top: 0.35rem;
+      }
+
+      /* badges */
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 0.5rem;
+      }
+      .badge {
+        padding: 0.25em 0.6em;
+        border-radius: 999px;
+        border: 1px solid rgba(125, 175, 255, 0.35);
+        background: linear-gradient(
+          180deg,
+          rgba(77, 163, 255, 0.18),
+          rgba(77, 163, 255, 0.1)
+        );
+        font-weight: 700;
+        font-size: 12px;
+        color: #fff;
+        white-space: nowrap;
+      }
+
+      /* responsive: stack columns on small screens */
+      @media (max-width: 900px) {
+        .research-board {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 640px) {
+        .research-board {
+          grid-template-columns: 1fr;
+        }
+        .research-col {
+          transform: none;
+        }
+      }
+
+      .bg-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -2;
+        pointer-events: none;
+        filter: brightness(1);
+      }
+
+      /* Top nav */
+      .nav {
+        position: fixed;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        background: linear-gradient(
+          180deg,
           rgba(10, 10, 20, 0.75),
-          /* top */
-          rgba(10, 10, 20, 0.65));
-      /* bottom */
-      border: 1px solid rgba(255, 255, 255, .16);
-      z-index: 50;
-      gap: calc(3.5 * var(--u));
-      padding: calc(1 * var(--u)) calc(1.6 * var(--u));
-      border-radius: calc(1.6 * var(--u));
-      backdrop-filter: blur(calc(1 * var(--u)));
-      border-width: 1px;
-    }
-
-    .brand {
-      font-weight: 800;
-      letter-spacing: .3px;
-      margin-right: 8px;
-      background: linear-gradient(90deg, #cfe3ff, #79b8ff, #4da3ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 calc(2 * var(--u)) rgba(77,163,255,.25); 
-    }
-
-    .nav a {
-      color: var(--muted);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: clamp(var(--fs-nav-min), var(--fs-nav-pref), var(--fs-nav-max));
-      padding: calc(.6 * var(--u)) calc(1 * var(--u));
-      border-radius: calc(1 * var(--u));
-    }
-
-    .nav a:hover {
-      background: var(--glass-bright);
-      color: #dfe7ff
-    }
-
-    .hero {
-      position: absolute;
-      bottom: calc(10 * var(--u));
-      /* keep ~12% gap from bottom */
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      z-index: 5;
-    }
-
-    .card {
-      --card-bg-top: rgba(8, 10, 18, .82);
-      --card-bg-bot: rgba(8, 10, 18, .72);
-      --card-br: calc(2.6 * var(--u));
-
-      position: relative;
-      max-width: min(1200px, 96vw);
-      background: linear-gradient(180deg, var(--card-bg-top), var(--card-bg-bot));
-      -webkit-backdrop-filter: blur(14px);
-      border: 2px solid rgba(255, 255, 255, .18);
-      padding: clamp(calc(1.8 * var(--u)), 3vw, calc(3.6 * var(--u)))
-              clamp(calc(1.8 * var(--u)), 4vw, calc(4.4 * var(--u)));
-      border-radius: var(--card-br);
-      backdrop-filter: blur(calc(1.4 * var(--u)));
-      border-width: 2px;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.08),
-        0 calc(2.4 * var(--u)) calc(7 * var(--u)) rgba(0,0,0,.55);
-      text-align: center
-    }
-
-    /* tiny animated shimmer on the ring (subtle) */
-    @keyframes ringGlow {
-      0% {
-        opacity: .38
+          /* top */ rgba(10, 10, 20, 0.65)
+        );
+        /* bottom */
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        z-index: 50;
+        gap: calc(3.5 * var(--u));
+        padding: calc(1 * var(--u)) calc(1.6 * var(--u));
+        border-radius: calc(1.6 * var(--u));
+        backdrop-filter: blur(calc(1 * var(--u)));
+        border-width: 1px;
       }
 
-      50% {
-        opacity: .55
+      .brand {
+        font-weight: 800;
+        letter-spacing: 0.3px;
+        margin-right: 8px;
+        background: linear-gradient(90deg, #cfe3ff, #79b8ff, #4da3ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 calc(2 * var(--u)) rgba(77, 163, 255, 0.25);
       }
 
-      100% {
-        opacity: .38
+      .nav a {
+        color: var(--muted);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: clamp(
+          var(--fs-nav-min),
+          var(--fs-nav-pref),
+          var(--fs-nav-max)
+        );
+        padding: calc(0.6 * var(--u)) calc(1 * var(--u));
+        border-radius: calc(1 * var(--u));
       }
-    }
 
-    .card::before {
-      animation: ringGlow 6s ease-in-out infinite;
-    }
+      .nav a:hover {
+        background: var(--glass-bright);
+        color: #dfe7ff;
+      }
 
-    /* Title: bigger, tighter tracking, soft glow */
-    .title {
-      margin: 0 0 .35rem;
-      font-weight: 800;
-      letter-spacing: .1px;
-      background: linear-gradient(180deg, #fff, #dfe9ff 70%, #a7baff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 6px 28px rgba(87, 140, 255, .18);
-      font-size: clamp(var(--fs-title-min), var(--fs-title-pref), var(--fs-title-max));
-      line-height: 1.05;
-    }
+      .hero {
+        position: relative;
+        bottom: -50vh;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        z-index: 5;
+        margin-top: auto;
+        padding-bottom: clamp(8vh, 12vh, 16vh);
+      }
 
-    /* Optional accent underline under title */
-    .title::after {
-      content: "";
-      display: block;
-      margin: .6rem auto 0;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #7fbaff, #4da3ff);
-      opacity: .75;
-      width: min(calc(12 * var(--u)), 18%); 
-      height: calc(.3 * var(--u));
-    }
+      .hero--with-photo .hero-wrap {
+        display: grid;
+        grid-template-columns: minmax(220px, 34vw) minmax(280px, 640px);
+        align-items: center;
+        width: min(1000px, 96vw);
+        justify-content: center;
+        margin-top: -25px;
+        column-gap: clamp(12px, 2vw, 24px);
+      }
 
-    /* Subtitle: narrower measure + higher contrast for readability */
-    .subtitle {
-      margin: .85rem auto 0;
-      max-width: 75ch;
-      color: #e7edff;
-      /* brighter than muted */
-      opacity: .92;
-      font-size: clamp(var(--fs-sub-min), var(--fs-sub-pref), var(--fs-sub-max));
-      line-height: 1.6;
-    }
+      .hero--with-photo .profile {
+        /* glassy photo frame */
+        margin: 0;
+        position: relative;
+        border-radius: calc(2.2 * var(--u));
+        overflow: hidden;
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.82),
+          rgba(8, 10, 18, 0.72)
+        );
+        border: 2px solid rgba(255, 255, 255, 0.18);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          0 calc(2.4 * var(--u)) calc(7 * var(--u)) rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(calc(1.4 * var(--u)));
+        -webkit-backdrop-filter: blur(calc(1.4 * var(--u)));
+        aspect-ratio: 7 / 5;
+        width: 100%; /* scale with column space */
+        max-width: 280px; /* reasonable cap */
+        min-width: 380px; /* don’t shrink too small */
+        justify-self: end; /* push photo right inside its column */
+      }
 
-    /* Button row (if you add CTAs later) */
-    .cta {
-      gap: 14px;
-      margin-top: clamp(14px, 2.2vw, 22px);
-    }
+      .hero--with-photo .profile-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        filter: saturate(1.04);
+      }
 
-    .btn {
-      padding: 12px 18px;
-      border-radius: 12px;
-    }
+      .hero--with-photo .profile::after {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        pointer-events: none;
+        box-shadow: 0 0 calc(3 * var(--u)) rgba(125, 175, 255, 0.18);
+      }
 
-    /* Mobile niceties */
-    @media (max-width: 560px) {
+      .hero--with-photo .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .hero--with-photo .card:hover {
+        transform: translateY(-6px) scale(1.1);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55),
+          0 0 12px rgba(77, 163, 255, 0.25); /* subtle glow */
+      }
+
+      /* Profile hover */
+      .hero--with-photo .profile {
+        transition: transform 0.35s ease, box-shadow 0.35s ease;
+      }
+
+      .hero--with-photo .profile:hover {
+        transform: translateY(-20px) scale(1.3);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55),
+          0 0 16px rgba(125, 175, 255, 0.35);
+      }
+
+      /* Optional: zoom-in effect on profile photo itself */
+      .hero--with-photo .profile-img {
+        transition: transform 0.6s ease;
+      }
+
+      .hero--with-photo .profile:hover .profile-img {
+        transform: scale(1.08);
+      }
+
+      @media (max-width: 860px) {
+        .hero--with-photo .hero-wrap {
+          grid-template-columns: 1fr;
+        }
+
+        .hero--with-photo .profile {
+          order: 2;
+          max-width: 420px;
+          justify-self: center;
+        }
+      }
+
+      /* Big glowing "Hi" before name */
+      .title .hi {
+        display: inline-block;
+        margin-right: 0.35ch;
+        font-weight: 900;
+        letter-spacing: 0.4px;
+        /* slightly larger than the title */
+        font-size: clamp(
+          calc(var(--fs-title-min) * 1.2),
+          calc(var(--fs-title-pref) * 1.15),
+          calc(var(--fs-title-max) * 1.15)
+        );
+        line-height: 0.9;
+        background: linear-gradient(
+          90deg,
+          #ffffff,
+          #dfe9ff 55%,
+          #79b8ff 85%,
+          #4da3ff
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 6px 28px rgba(87, 140, 255, 0.25),
+          0 0 24px rgba(125, 175, 255, 0.35), 0 0 44px rgba(77, 163, 255, 0.25);
+        filter: drop-shadow(0 6px 18px rgba(77, 163, 255, 0.25));
+      }
+
+      /* Highlighted phrases (subtle glassy pills) */
+      .pill {
+        display: inline-block;
+        padding: 0.08em 0.5em;
+        border-radius: 0.65em;
+        background: linear-gradient(
+          180deg,
+          rgba(77, 163, 255, 0.18),
+          rgba(77, 163, 255, 0.1)
+        );
+        border: 1px solid rgba(125, 175, 255, 0.35);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18),
+          0 4px 16px rgba(77, 163, 255, 0.2);
+        color: #fff; /* keep contrast on dark bg */
+        font-weight: 700; /* make the key term pop */
+        white-space: nowrap; /* keep short terms tidy */
+      }
+
       .card {
-        padding: 18px 16px 22px;
+        --card-bg-top: rgba(8, 10, 18, 0.82);
+        --card-bg-bot: rgba(8, 10, 18, 0.72);
+        --card-br: calc(2.6 * var(--u));
+
+        position: relative;
+        max-width: min(1200px, 96vw);
+        background: linear-gradient(
+          180deg,
+          var(--card-bg-top),
+          var(--card-bg-bot)
+        );
+        -webkit-backdrop-filter: blur(14px);
+        border: 2px solid rgba(255, 255, 255, 0.18);
+        padding: clamp(calc(1.8 * var(--u)), 3vw, calc(3.6 * var(--u)))
+          clamp(calc(1.8 * var(--u)), 4vw, calc(4.4 * var(--u)));
+        border-radius: var(--card-br);
+        backdrop-filter: blur(calc(1.4 * var(--u)));
+        border-width: 1px;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          0 calc(2.4 * var(--u)) calc(7 * var(--u)) rgba(0, 0, 0, 0.55);
+        text-align: center;
       }
 
+      /* tiny animated shimmer on the ring (subtle) */
+      @keyframes ringGlow {
+        0% {
+          opacity: 0.38;
+        }
+
+        50% {
+          opacity: 0.55;
+        }
+
+        100% {
+          opacity: 0.38;
+        }
+      }
+
+      .card::before {
+        animation: ringGlow 6s ease-in-out infinite;
+      }
+
+      /* Title: bigger, tighter tracking, soft glow */
+      .title {
+        margin: 0 0 0.35rem;
+        font-weight: 800;
+        letter-spacing: 0.1px;
+        background: linear-gradient(180deg, #fff, #dfe9ff 70%, #a7baff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 6px 28px rgba(87, 140, 255, 0.18);
+        font-size: clamp(
+          var(--fs-title-min),
+          var(--fs-title-pref),
+          var(--fs-title-max)
+        );
+        line-height: 1.05;
+      }
+
+      /* Optional accent underline under title */
       .title::after {
-        width: 96px;
-      }
-    }
-
-    .btn:hover {
-      filter: brightness(1.08);
-      transform: translateY(-1px)
-    }
-
-    .btn.ghost {
-      background: transparent;
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, .35);
-      box-shadow: none
-    }
-
-    .btn.ghost:hover {
-      background: rgba(255, 255, 255, .12)
-    }
-
-    /* Footer */
-    .footer {
-      position: fixed;
-      bottom: calc(1 * var(--u));
-      left: 50%;
-      transform: translateX(-50%);
-      color: #c5d2ffb0;
-      font-size: clamp(var(--fs-footer-min), var(--fs-footer-pref), var(--fs-footer-max));
-      letter-spacing: .2px;
-      background: var(--glass);
-      padding: calc(.6 * var(--u)) calc(1 * var(--u));
-      border-radius: calc(1.2 * var(--u));
-      backdrop-filter: blur(calc(.8 * var(--u)));
-      border: 1px solid rgba(255, 255, 255, .14);
-      z-index: 5;
-    }
-
-    /* ===== Wires (SVG) ===== */
-    .wires {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1
-    }
-
-    .wire {
-      stroke: url(#wireGradient);
-      stroke-linecap: round;
-      stroke-opacity: .55;
-      animation: dash 14s linear infinite;
-      stroke-width: calc(.25 * var(--u));
-      stroke-dasharray: calc(1 * var(--u)) calc(1.4 * var(--u));
-      filter: url(#wireGlow);
-    }
-
-    @keyframes dash {
-      to {
-        stroke-dashoffset: -400
-      }
-    }
-
-    /* ===== Nodes ===== */
-    .node {
-      position: absolute;
-      z-index: 2;
-      width: var(--node-size);
-      height: var(--node-size);
-      border-radius: 50%;
-      /* Inner: solid white, Outer: semi-transparent white ring */
-      background: #ffffff;                         /* solid core */
-      border: 3px solid rgba(255,255,255,.55);     /* translucent ring */
-      /* Movement hook */
-      transform: translate(var(--tx, 0), var(--ty, 0)) scale(var(--scale, 1));
-      transition: transform .25s ease, box-shadow .35s ease, filter .35s ease;
-      cursor: pointer;
-
-      /* Soft base glow around the node */
-      box-shadow:
-        0 0 10px rgba(255,255,255,.45),
-        0 0 50px rgba(255,255,255,.28);
-    }
-
-    .node .plate {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(255,255,255,.18);   /* semi-transparent fill */
-
-      z-index: -1;                  /* sit behind the white core */
-      pointer-events: none;
-      inset: calc(-1 * var(--u));                   /* size of backplate */
-      box-shadow:
-        0 0 calc(1 * var(--u)) rgba(255,255,255,1),
-        0 0 calc(10 * var(--u)) rgba(255,255,255,.12);
-    }
-
-    /* Halo shimmer surrounding the node */
-    .node::before {
-      content: "";
-      position: absolute;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle, rgba(255,255,255,.30), rgba(255,255,255,0) 60%);
-      opacity: .5;
-      animation: halo 5.5s ease-in-out infinite alternate;
-      pointer-events: none;
-      inset: calc(-1.6 * var(--u));
-      filter: blur(calc(1.8 * var(--u)));
-    }
-
-    /* Subtle “breathing” of the core highlight */
-    .node::after {
-      content: "";
-      position: absolute;
-      inset: 22%;                  /* smaller than the outer ring */
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.98) 0 45%, rgba(255,255,255,1) 46% 100%);
-      box-shadow: inset 0 3px 8px rgba(255,255,255,.9);
-      animation: corePulse 3.5s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    @keyframes halo {
-      0%   { transform: scale(1);   opacity: .65; filter: blur(20px); }
-      50%  { transform: scale(1.08); opacity: .9;  filter: blur(25px); }
-      100% { transform: scale(1.15); opacity: .7;  filter: blur(30px); }
-    }
-
-    @keyframes corePulse {
-      0%,100% { transform: scale(1);   }
-      50%     { transform: scale(1.04); }
-    }
-
-    .node:hover {
-      --scale: var(--hover-scale);
-      box-shadow:
-        0 0 18px rgba(255,255,255,.75),
-        0 0 44px rgba(255,255,255,.45);
-      filter: brightness(1.05);
-    }
-
-    /* Tooltip: keep readable over bright nodes */
-    .node-menu {
-      position: absolute;
-      left: 50%;
-      background: rgba(0,0,0,.65);
-      backdrop-filter: blur(6px);
-      color: #fff;
-      font-size: .7rem; font-weight: 700; line-height: 1.2;
-      white-space: nowrap; opacity: 0; pointer-events: none;
-      transition: opacity .2s ease, transform .2s ease;
-      z-index: 3;
-      transform: translateX(-50%) translateY(-4px);
-      top: calc(-4 * var(--u));
-      padding: calc(.5 * var(--u)) calc(.8 * var(--u));
-      border-radius: calc(.8 * var(--u));
-      box-shadow: 0 calc(.6 * var(--u)) calc(1.4 * var(--u)) rgba(0,0,0,.28),
-              inset 0 1px 0 rgba(255,255,255,.1);
-    }
-
-    .node:hover .node-menu { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .node-menu.below { top: calc(100% + 10px); }
-    .node-menu a { color: #e7edff; text-decoration: none; }
-
-    /* Motion preference */
-    @media (prefers-reduced-motion: reduce) {
-      .node::before, .node::after { animation: none; }
-      .wire { animation: none; stroke-dasharray: none; }
-    }
-
-
-    /* ===== Contact Bar (top-left) ===== */
-    .contact-bar {
-      position: fixed;
-      display: flex;
-      flex-direction: column;
-      /* Same recipe as .card */
-      background: linear-gradient(180deg,
-                  rgba(8, 10, 18, 0.82),
-                  rgba(8, 10, 18, 0.72));
-      border: 2px solid rgba(255, 255, 255, 0.18);
-      isolation: isolate;                 /* keeps blur compositing clean */
-      z-index: 50;
-      top: calc(1.4 * var(--u));
-      left: calc(1.4 * var(--u));
-      gap: calc(1 * var(--u));
-      padding: calc(1.2 * var(--u));
-      border-radius: calc(1.8 * var(--u));
-      backdrop-filter: blur(calc(5 * var(--u)));
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.08),
-        0 calc(2.4 * var(--u)) calc(7 * var(--u)) rgba(0,0,0,.55);
+        content: "";
+        display: block;
+        margin: 0.6rem auto 0;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #7fbaff, #4da3ff);
+        opacity: 0.75;
+        width: min(calc(12 * var(--u)), 18%);
+        height: calc(0.3 * var(--u));
       }
 
-    /* Each icon button (placeholder by default) */
-    .contact-btn {
-      display: grid;
-      place-items: center;
-      background: var(--glass);
-      border: 1px solid rgba(255, 255, 255, .25);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
-      transition: transform .15s ease, filter .2s ease, background .2s ease;
-      text-decoration: none;
-      will-change: transform;
-      transform: translateZ(0);
-      width: calc(3.5 * var(--u));
-      height: calc(3.5 * var(--u));
-      border-radius: calc(1 * var(--u));
-    }
+      /* Subtitle: narrower measure + higher contrast for readability */
+      .subtitle {
+        margin: 0.85rem auto 0;
+        max-width: 75ch;
+        color: #e7edff;
+        /* brighter than muted */
+        opacity: 0.92;
+        font-size: clamp(
+          var(--fs-sub-min),
+          var(--fs-sub-pref),
+          var(--fs-sub-max)
+        );
+        line-height: 1.6;
+      }
 
-    /* If you add a real SVG later, it will auto-replace the placeholder */
-    .contact-btn img,
-    .contact-btn svg {
-      width: 90%;
-      height: 90%;
-      display: block;           /* remove inline gap */
-      object-fit: contain;      /* preserve aspect ratio inside the padded square */
-      border-radius: calc(.9 * var(--u));
-      background: #dfe9ff;
-      will-change: transform;
-      transform: translateZ(0);
-      backface-visibility: hidden;
-      transition: none; /* avoid tiny resamples */
-    }
+      /* Button row (if you add CTAs later) */
+      .cta {
+        gap: 14px;
+        margin-top: clamp(14px, 2.2vw, 22px);
+      }
 
-    /* If an icon is present, hide the placeholder glyph */
-    .contact-btn:has(img),
-    .contact-btn:has(svg) {
-      position: relative;
-    }
-    .contact-btn:has(img)::before,
-    .contact-btn:has(svg)::before {
-      content: none;
-    }
+      .btn {
+        padding: 12px 18px;
+        border-radius: 12px;
+      }
 
-    /* Hover niceties */
-    .contact-btn:hover {
-      background: var(--glass-bright);
-      transform: translateY(-3px);
-      filter: brightness(1.3);
-    }
+      /* Mobile niceties */
+      @media (max-width: 560px) {
+        .card {
+          padding: 18px 16px 22px;
+        }
 
-    /* Keep your mobile row layout */
-    @media (max-width: 560px) {
+        .title::after {
+          width: 96px;
+        }
+      }
+
+      .btn:hover {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+      }
+
+      .btn.ghost {
+        background: transparent;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        box-shadow: none;
+      }
+
+      .btn.ghost:hover {
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      /* Footer */
+      .footer {
+        position: fixed;
+        bottom: calc(1 * var(--u));
+        left: 50%;
+        transform: translateX(-50%);
+        color: #c5d2ffb0;
+        font-size: clamp(
+          var(--fs-footer-min),
+          var(--fs-footer-pref),
+          var(--fs-footer-max)
+        );
+        letter-spacing: 0.2px;
+        background: var(--glass);
+        padding: calc(0.6 * var(--u)) calc(1 * var(--u));
+        border-radius: calc(1.2 * var(--u));
+        backdrop-filter: blur(calc(0.8 * var(--u)));
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        z-index: 5;
+      }
+
+      /* ===== Wires (SVG) ===== */
+      .wires {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .wire {
+        stroke: url(#wireGradient);
+        stroke-linecap: round;
+        stroke-opacity: 0.55;
+        animation: dash 14s linear infinite;
+        stroke-width: calc(0.25 * var(--u));
+        stroke-dasharray: calc(1 * var(--u)) calc(1.4 * var(--u));
+        filter: url(#wireGlow);
+      }
+
+      @keyframes dash {
+        to {
+          stroke-dashoffset: -400;
+        }
+      }
+
+      /* ===== Nodes ===== */
+      .node {
+        position: absolute;
+        z-index: 2;
+        width: var(--node-size);
+        height: var(--node-size);
+        border-radius: 50%;
+        /* Inner: solid white, Outer: semi-transparent white ring */
+        background: #ffffff;
+        /* solid core */
+        border: 3px solid rgba(255, 255, 255, 0.55);
+        /* translucent ring */
+        /* Movement hook */
+        transform: translate(var(--tx, 0), var(--ty, 0)) scale(var(--scale, 1));
+        transition: transform 0.25s ease, box-shadow 0.35s ease,
+          filter 0.35s ease;
+        cursor: pointer;
+
+        /* Soft base glow around the node */
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.45),
+          0 0 50px rgba(255, 255, 255, 0.28);
+      }
+
+      .node .plate {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.18);
+        /* semi-transparent fill */
+
+        z-index: -1;
+        /* sit behind the white core */
+        pointer-events: none;
+        inset: calc(-1 * var(--u));
+        /* size of backplate */
+        box-shadow: 0 0 calc(1 * var(--u)) rgba(255, 255, 255, 1),
+          0 0 calc(10 * var(--u)) rgba(255, 255, 255, 0.12);
+      }
+
+      /* Halo shimmer surrounding the node */
+      .node::before {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.3),
+          rgba(255, 255, 255, 0) 60%
+        );
+        opacity: 0.5;
+        animation: halo 5.5s ease-in-out infinite alternate;
+        pointer-events: none;
+        inset: calc(-1.6 * var(--u));
+        filter: blur(calc(1.8 * var(--u)));
+      }
+
+      /* Subtle “breathing” of the core highlight */
+      .node::after {
+        content: "";
+        position: absolute;
+        inset: 22%;
+        /* smaller than the outer ring */
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 30% 30%,
+          rgba(255, 255, 255, 0.98) 0 45%,
+          rgba(255, 255, 255, 1) 46% 100%
+        );
+        box-shadow: inset 0 3px 8px rgba(255, 255, 255, 0.9);
+        animation: corePulse 3.5s ease-in-out infinite;
+        pointer-events: none;
+      }
+
+      @keyframes halo {
+        0% {
+          transform: scale(1);
+          opacity: 0.65;
+          filter: blur(20px);
+        }
+
+        50% {
+          transform: scale(1.08);
+          opacity: 0.9;
+          filter: blur(25px);
+        }
+
+        100% {
+          transform: scale(1.15);
+          opacity: 0.7;
+          filter: blur(30px);
+        }
+      }
+
+      @keyframes corePulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+
+        50% {
+          transform: scale(1.04);
+        }
+      }
+
+      .node:hover {
+        --scale: var(--hover-scale);
+        box-shadow: 0 0 18px rgba(255, 255, 255, 0.75),
+          0 0 44px rgba(255, 255, 255, 0.45);
+        filter: brightness(1.05);
+      }
+
+      /* Tooltip: keep readable over bright nodes */
+      .node-menu {
+        position: absolute;
+        left: 50%;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(6px);
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 700;
+        line-height: 1.2;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        z-index: 3;
+        transform: translateX(-50%) translateY(-4px);
+        top: calc(-4 * var(--u));
+        padding: calc(0.5 * var(--u)) calc(0.8 * var(--u));
+        border-radius: calc(0.8 * var(--u));
+        box-shadow: 0 calc(0.6 * var(--u)) calc(1.4 * var(--u))
+            rgba(0, 0, 0, 0.28),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+
+      .node:hover .node-menu {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .node-menu.below {
+        top: calc(100% + 10px);
+      }
+
+      .node-menu a {
+        color: #e7edff;
+        text-decoration: none;
+      }
+
+      /* Motion preference */
+      @media (prefers-reduced-motion: reduce) {
+        .node::before,
+        .node::after {
+          animation: none;
+        }
+
+        .wire {
+          animation: none;
+          stroke-dasharray: none;
+        }
+      }
+
+      /* ===== Contact Bar (top-left) ===== */
       .contact-bar {
-        flex-direction: row;
-        gap: calc(.8 * var(--u));
-        padding: calc(.8 * var(--u));
-        top: calc(1.2 * var(--u));
-        left: calc(1.2 * var(--u));
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        /* Same recipe as .card */
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.82),
+          rgba(8, 10, 18, 0.72)
+        );
+        border: 2px solid rgba(255, 255, 255, 0.18);
+        isolation: isolate;
+        /* keeps blur compositing clean */
+        z-index: 50;
+        top: calc(1.4 * var(--u));
+        left: calc(1.4 * var(--u));
+        gap: calc(1 * var(--u));
+        padding: calc(1.2 * var(--u));
+        border-radius: calc(1.8 * var(--u));
+        backdrop-filter: blur(calc(5 * var(--u)));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          0 calc(2.4 * var(--u)) calc(7 * var(--u)) rgba(0, 0, 0, 0.55);
       }
-    }
 
-    /* Hide helper (used on the rail) */
-    .is-hidden { display: none !important; }
-
-    /* Bottom-right dock tab */
-    .media-tab {
-      position: fixed;
-      right: calc(1.2 * var(--u));
-      bottom: calc(1.2 * var(--u));
-      z-index: 60; /* above rail */
-      display: none;                  
-      align-items: center;
-      justify-content: center;
-      width: clamp(120px, 12vmin, 140px); 
-      height: clamp(36px, 8vmin, 48px); 
-      border-radius: 14px;
-      background: linear-gradient(180deg, rgba(8,10,18,.72), rgba(8,10,18,.55));
-      border: 1px solid rgba(255,255,255,.18);
-      box-shadow:
-        0 10px 24px rgba(0,0,0,.35),
-        inset 0 1px 0 rgba(255,255,255,.08);
-      cursor: pointer;
-      padding: 0 10px; /* optional extra padding inside */
-      backdrop-filter: blur(calc(4 * var(--u)));
-      -webkit-backdrop-filter: blur(calc(4 * var(--u)));
-      transition: transform .15s ease, filter .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
-    }
-
-    .media-tab:hover{
-      transform: translateY(-1px);
-      filter: brightness(1.08);
-      border-color: rgba(255,255,255,.28);
-    }
-
-    .media-tab:active{ transform: translateY(0); }
-
-
-    .media-tab img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      -webkit-user-drag: none;
-      user-select: none;
-      pointer-events: none;
-    }
-    .media-tab__fallback{
-      font-weight: 800;
-      font-size: 10px;
-      letter-spacing: 0.6px;
-      color: #e7edff;
-      display: none; /* shows only if img fails to load (JS adds a class if needed) */
-    }
-
-    /* show tab when minimized */
-    .media-tab.is-visible{ display: inline-flex; }
-
-    /* ===== Media Rail (top-right carousel) ===== */
-    .media-rail {
-      position: fixed;
-      top: calc(1.4 * var(--u));
-      right: calc(1.4 * var(--u));
-      width: min(calc(35 * var(--u)), 30vw);
-      height: min(calc(35 * var(--u)), 30vh);
-      display: grid;
-      grid-template-rows: 1fr;          /* viewport only */
-      gap: 0;
-      padding: calc(.8 * var(--u));
-      border-radius: calc(1.2 * var(--u));
-      background: linear-gradient(180deg, rgba(8,10,18,.82), rgba(8,10,18,.72));
-      border: 1px solid rgba(255,255,255,.18);
-      backdrop-filter: blur(calc(5 * var(--u)));
-      -webkit-backdrop-filter: blur(calc(5 * var(--u)));
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.08),
-        0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(0,0,0,.45);
-      overflow: hidden;
-      z-index: 45;
-    }
-
-    .media-viewport {
-      position: relative;
-      width: 100%; height: 100%;
-      border-radius: calc(.8 * var(--u));
-      overflow: hidden;
-      isolation: isolate;
-      background: rgba(255,255,255,.02);
-      cursor: grab;
-    }
-
-    .media-viewport.is-dragging {
-      cursor: grabbing;
-      user-select: none;
-    }
-
-    /* subtle edge fades over media so controls read clearly */
-    .media-viewport::before,
-    .media-viewport::after{
-      content:"";
-      position:absolute; inset:0;
-      pointer-events:none; z-index:1;
-    }
-    .media-viewport::before{
-      background:
-        linear-gradient(to bottom, rgba(0,0,0,.32) 0%, transparent 40%),
-        linear-gradient(to top, transparent 70%, rgba(0,0,0,.22) 100%);
-    }
-    .media-viewport::after{
-      /* left/right edge glows like the background vignette */
-      background:
-        linear-gradient(90deg, rgba(0,0,0,.10), transparent 20% 80%, rgba(0,0,0,.10));
-      mix-blend-mode: normal;
-    }
-
-    .media-track{ 
-      display:flex; 
-      height:100%; 
-      transition: transform .6s ease; 
-      will-change: transform;
-      transform: translateZ(0);
-    }
-
-    .media-slide{
-      min-width:100%; height:100%;
-      display:grid; place-items:center;
-    }
-    .media-slide img, .media-slide video{
-      max-width:100%; max-height:100%;
-      width:auto; height:auto; object-fit:contain; display:block;
-      pointer-events: none;          /* ensures drag hits the viewport, not the media */
-      -webkit-user-drag: none;       /* Safari/Chrome */
-      user-select: none;
-    }
-
-    /* ---------- Top dots (“scroll bar”) ---------- */
-    .media-dots-overlay{
-      position: absolute;
-      top: calc(2 * var(--u));   /* lower a bit so they sit below the buttons */
-      left: 50%;                   /* center horizontally */
-      transform: translateX(-50%); /* exact centering */
-      display: flex;
-      justify-content: center;
-      z-index: 2;
-      pointer-events: none;
-      opacity: .4;
-      transition: opacity .2s ease, transform .2s ease;
-    }
-    .media-rail:hover .media-dots-overlay,
-    .media-rail:focus-within .media-dots-overlay{ opacity:.95; }
-
-    .media-dots{
-      pointer-events:auto;
-      display:flex; gap:calc(.45 * var(--u)); align-items:center;
-      padding:calc(.35 * var(--u)) calc(.8 * var(--u));
-      border-radius:999px;
-      background: linear-gradient(180deg, rgba(8,10,18,.55), rgba(8,10,18,.38));
-      backdrop-filter: blur(calc(3 * var(--u)));
-      -webkit-backdrop-filter: blur(calc(3 * var(--u)));
-      box-shadow: 0 6px 18px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
-    }
-    .media-dot{
-      width: calc(.5 * var(--u)); height: calc(.9 * var(--u));
-      border-radius:50%;
-      background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.28);
-      opacity:.8; transition:transform .2s ease, background .2s ease, opacity .2s ease, box-shadow .2s ease;
-      box-shadow: 0 0 0 0 rgba(77,163,255,0);
-    }
-    .media-dot[aria-current="true"]{
-      background: linear-gradient(180deg, #fff, #e8f1ff);
-      border-color: rgba(255,255,255,.9);
-      opacity:1; transform:scale(1.1);
-      box-shadow: 0 0 0 2px rgba(77,163,255,.25);   /* brand-blue halo */
-    }
-
-    /* ---------- Bottom wide nav (prev/next zones) ---------- */
-    .media-bottom-nav{
-      position:absolute; left:0; right:0; bottom:0;
-      display:flex; gap:calc(.7 * var(--u));
-      padding:calc(.6 * var(--u)) calc(.6 * var(--u));
-      z-index:3; pointer-events:none;
-      background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.22) 60%);
-    }
-
-    /* glass buttons that blend with the rest of the site */
-    .media-btn{
-      display:grid; place-items:center;
-      border-radius: calc(1 * var(--u));
-      background: linear-gradient(180deg, rgba(8,10,18,.55), rgba(8,10,18,.42));
-      border:1px solid rgba(255,255,255,.18);
-      color:#e7edff; font-weight:800; line-height:1;
-      user-select:none; cursor:pointer;
-      transition: transform .15s ease, filter .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
-      text-shadow: 0 1px 0 rgba(0,0,0,.45);
-    }
-
-    .media-btn--wide{
-      pointer-events:auto;
-      flex:1;                        /* stretch across */
-      height:calc(3.2 * var(--u));   /* bigger hit area */
-      font-size: clamp(16px, 2vmin, 22px);
-    }
-
-    /* give each side a subtle directional gradient */
-    #mediaPrev.media-btn--wide{
-      background: linear-gradient(90deg, rgba(8,10,18,.55), rgba(8,10,18,.38));
-    }
-    #mediaNext.media-btn--wide{
-      background: linear-gradient(-90deg, rgba(8,10,18,.55), rgba(8,10,18,.38));
-    }
-
-    .media-btn:hover{
-      background: linear-gradient(180deg, rgba(12,16,28,.72), rgba(12,16,28,.55));
-      border-color: rgba(255,255,255,.32);
-      filter: brightness(1.08);
-      transform: translateY(-1px);
-      box-shadow:
-        0 10px 24px rgba(0,0,0,.35),
-        inset 0 0 0 1px rgba(125,175,255,.15);
-    }
-
-    /* tiny ripple on active to feel clicky */
-    .media-btn:active{ transform: translateY(0); filter: brightness(1.0); }
-
-    /* mobile: keep controls readable */
-    @media (max-width: 640px){
-      .media-rail{
-        width: clamp(280px, 42vw, 560px);
-        height: clamp(180px, 24vh, 360px);
+      /* Each icon button (placeholder by default) */
+      .contact-btn {
+        display: grid;
+        place-items: center;
+        background: var(--glass);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        transition: transform 0.15s ease, filter 0.2s ease, background 0.2s ease;
+        text-decoration: none;
+        will-change: transform;
+        transform: translateZ(0);
+        width: calc(3.5 * var(--u));
+        height: calc(3.5 * var(--u));
+        border-radius: calc(1 * var(--u));
       }
-      .media-btn--wide{ height: calc(3.8 * var(--u)); }
-      .media-dots-overlay{ transform: translateY(1px); }
-    }
 
-    /* Enlarge toggle button (top-right, glassy) */
-    .media-enlarge-btn{
-      position:absolute;
-      top: calc(0.1 * var(--u));
-      right: calc(.1 * var(--u));   /* stays at the very right */
-      z-index: 4;
-      display:grid; place-items:center;
-      width: calc(2.6 * var(--u)); height: calc(2.6 * var(--u));
-      border-radius: calc(.8 * var(--u));
-      background: linear-gradient(180deg, rgba(8,10,18,.55), rgba(8,10,18,.38));
-      border: 1px solid rgba(255,255,255,.18);
-      color:#e7edff; font-weight:800; line-height:1;
-      cursor:pointer; user-select:none;
-      text-shadow: 0 1px 0 rgba(0,0,0,.45);
-      transition: transform .15s ease, filter .2s ease, background .2s ease,
-                  border-color .2s ease, box-shadow .2s ease;
-    }
+      body {
+        padding-bottom: calc(6 * var(--u));
+      }
 
-    .media-enlarge-btn:hover{
-      background: linear-gradient(180deg, rgba(12,16,28,.72), rgba(12,16,28,.55));
-      border-color: rgba(255,255,255,.32);
-      filter: brightness(1.08);
-      transform: translateY(-1px);
-    }
+      /* If you add a real SVG later, it will auto-replace the placeholder */
+      .contact-btn img,
+      .contact-btn svg {
+        width: 90%;
+        height: 90%;
+        display: block;
+        /* remove inline gap */
+        object-fit: contain;
+        /* preserve aspect ratio inside the padded square */
+        border-radius: calc(0.9 * var(--u));
+        background: #dfe9ff;
+        will-change: transform;
+        transform: translateZ(0);
+        backface-visibility: hidden;
+        transition: none;
+        /* avoid tiny resamples */
+      }
 
-    /* Expanded rail sizing (less than half screen) */
-    .media-rail{
-      transition: width .28s ease, height .28s ease, transform .28s ease, right .28s ease, top .28s ease;
-      will-change: transform;
-      contain: layout paint; /* isolates layout/paint inside for perf */
-    }
+      /* If an icon is present, hide the placeholder glyph */
+      .contact-btn:has(img),
+      .contact-btn:has(svg) {
+        position: relative;
+      }
 
-    .media-rail.media-rail--expanded{
-      /* grow but keep under ~1/2 screen; stays fixed in the top-right */
-      width: min(calc(50 * var(--u)), 48vw);
-      height: min(calc(50 * var(--u)), 42vh);
-    }
+      .contact-btn:has(img)::before,
+      .contact-btn:has(svg)::before {
+        content: none;
+      }
 
-    /* Make inner content adapt smoothly too */
-    .media-viewport,
-    .media-track,
-    .media-slide { transition: transform .28s ease; }
+      /* Hover niceties */
+      .contact-btn:hover {
+        background: var(--glass-bright);
+        transform: translateY(-3px);
+        filter: brightness(1.3);
+      }
 
-    /* Mobile fallback: enlarged = nearly full width, modest height */
-    @media (max-width: 640px){
-      .media-rail.media-rail--expanded{
-        left: calc(1.2 * var(--u));           /* center it a bit */
+      /* Keep your mobile row layout */
+      @media (max-width: 560px) {
+        .contact-bar {
+          flex-direction: row;
+          gap: calc(0.8 * var(--u));
+          padding: calc(0.8 * var(--u));
+          top: calc(1.2 * var(--u));
+          left: calc(1.2 * var(--u));
+        }
+      }
+
+      /* Hide helper (used on the rail) */
+      .is-hidden {
+        display: none !important;
+      }
+
+      /* Bottom-right dock tab */
+      .media-tab {
+        position: fixed;
         right: calc(1.2 * var(--u));
-        width: auto;                           /* fill horizontally within padding */
-        height: clamp(240px, 48vh, 420px);     /* comfy, not full-screen */
+        bottom: calc(1.2 * var(--u));
+        z-index: 60;
+        /* above rail */
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: clamp(120px, 12vmin, 140px);
+        height: clamp(36px, 8vmin, 48px);
+        border-radius: 14px;
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.72),
+          rgba(8, 10, 18, 0.55)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35),
+          inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        cursor: pointer;
+        padding: 0 10px;
+        /* optional extra padding inside */
+        backdrop-filter: blur(calc(4 * var(--u)));
+        -webkit-backdrop-filter: blur(calc(4 * var(--u)));
+        transition: transform 0.15s ease, filter 0.2s ease, background 0.2s ease,
+          border-color 0.2s ease, box-shadow 0.2s ease;
       }
-    }
 
-    /* Minimize button (top-right, next to enlarge) */
-    .media-minimize-btn{
-      position: absolute;
-      top: calc(.8 * var(--u));
-      left: calc(.8 * var(--u));      /* moved from right -> left */
-      right: auto;                    /* ensure right is unset */
-      z-index: 4;
-      display: grid; place-items: center;
-      width: calc(2.6 * var(--u)); height: calc(2.6 * var(--u));
-      border-radius: calc(.8 * var(--u));
-      background: linear-gradient(180deg, rgba(8,10,18,.55), rgba(8,10,18,.38));
-      border: 1px solid rgba(255,255,255,.18);
-      color:#e7edff; font-weight:800; line-height:1;
-      cursor:pointer; user-select:none;
-      text-shadow: 0 1px 0 rgba(0,0,0,.45);
-      transition: transform .15s ease, filter .2s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
-    }
+      .media-tab:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.08);
+        border-color: rgba(255, 255, 255, 0.28);
+      }
 
-    .media-minimize-btn:hover{
-      background: linear-gradient(180deg, rgba(12,16,28,.72), rgba(12,16,28,.55));
-      border-color: rgba(255,255,255,.32);
-      filter: brightness(1.08);
-      transform: translateY(-1px);
-    }
+      .media-tab:active {
+        transform: translateY(0);
+      }
 
-  </style>
-</head>
+      .media-tab img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        -webkit-user-drag: none;
+        user-select: none;
+        pointer-events: none;
+      }
 
-<body>
-  <div class="stage vignette" id="stage">
-    <video id="bg" class="bg-video" src="main_bg.mp4" autoplay muted loop playsinline preload="auto"></video>
+      .media-tab__fallback {
+        font-weight: 800;
+        font-size: 10px;
+        letter-spacing: 0.6px;
+        color: #e7edff;
+        display: none;
+        /* shows only if img fails to load (JS adds a class if needed) */
+      }
 
-    <!-- Top nav -->
-    <nav class="nav" aria-label="Primary">
-      <div class="brand">ERIC&nbsp;LIU</div>
-      <a href="#research">Research</a>
-      <a href="#projects">Projects</a>
-      <a href="#publications">Publications</a>
-      <a href="#aboutme">About Me!</a>
-    </nav>
+      /* show tab when minimized */
+      .media-tab.is-visible {
+        display: inline-flex;
+      }
 
-    <!-- Hero -->
-    <section class="hero">
-      <div class="card" role="banner">
-        <h1 class="title">Nice to meet you, I'm Eric!</h1>
-        <p class="subtitle">
-          I am a Biomedical Engineering graduate from NUS with highest distinction, specializing in neural systems,
-          gait analysis, and brain-computer interfaces. My research spans non-human primate spatial memory,
-          EEG/MEG signal processing, and wearable IMU-based motion sensing, and working on a publication in trajectory
-          estimation. Alongside academic work, I've contributed to projects at EPFL TNE Lab, NUS iHealthtech,
-          and NUS N.1 Lab and blending engineering in my daily projects.
-        </p>
+      /* ===== Media Rail (top-right carousel) ===== */
+      .media-rail {
+        position: fixed;
+        top: calc(1.4 * var(--u));
+        right: calc(1.4 * var(--u));
+        width: min(calc(35 * var(--u)), 30vw);
+        height: min(calc(35 * var(--u)), 30vh);
+        display: grid;
+        grid-template-rows: 1fr;
+        /* viewport only */
+        gap: 0;
+        padding: calc(0.8 * var(--u));
+        border-radius: calc(1.2 * var(--u));
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.82),
+          rgba(8, 10, 18, 0.72)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(calc(5 * var(--u)));
+        -webkit-backdrop-filter: blur(calc(5 * var(--u)));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(0, 0, 0, 0.45);
+        overflow: hidden;
+        z-index: 45;
+      }
 
+      .media-viewport {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: calc(0.8 * var(--u));
+        overflow: hidden;
+        isolation: isolate;
+        background: rgba(255, 255, 255, 0.02);
+        cursor: grab;
+      }
+
+      .media-viewport.is-dragging {
+        cursor: grabbing;
+        user-select: none;
+      }
+
+      /* subtle edge fades over media so controls read clearly */
+      .media-viewport::before,
+      .media-viewport::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      .media-viewport::before {
+        background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.32) 0%,
+            transparent 40%
+          ),
+          linear-gradient(to top, transparent 70%, rgba(0, 0, 0, 0.22) 100%);
+      }
+
+      .media-viewport::after {
+        /* left/right edge glows like the background vignette */
+        background: linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.1),
+          transparent 20% 80%,
+          rgba(0, 0, 0, 0.1)
+        );
+        mix-blend-mode: normal;
+      }
+
+      .media-track {
+        display: flex;
+        height: 100%;
+        transition: transform 0.6s ease;
+        will-change: transform;
+        transform: translateZ(0);
+      }
+
+      .media-slide {
+        min-width: 100%;
+        height: 100%;
+        display: grid;
+        place-items: center;
+      }
+
+      .media-slide img,
+      .media-slide video {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        display: block;
+        pointer-events: none;
+        /* ensures drag hits the viewport, not the media */
+        -webkit-user-drag: none;
+        /* Safari/Chrome */
+        user-select: none;
+      }
+
+      /* ---------- Top dots (“scroll bar”) ---------- */
+      .media-dots-overlay {
+        position: absolute;
+        top: calc(0.7 * var(--u));
+        /* lower a bit so they sit below the buttons */
+        left: 50%;
+        /* center horizontally */
+        transform: translateX(-50%);
+        /* exact centering */
+        display: flex;
+        justify-content: center;
+        z-index: 2;
+        pointer-events: none;
+        opacity: 0.4;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+      }
+
+      .media-rail:hover .media-dots-overlay,
+      .media-rail:focus-within .media-dots-overlay {
+        opacity: 0.95;
+      }
+
+      .media-dots {
+        pointer-events: auto;
+        display: flex;
+        gap: calc(0.45 * var(--u));
+        align-items: center;
+        padding: calc(0.35 * var(--u)) calc(0.8 * var(--u));
+        border-radius: 999px;
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.55),
+          rgba(8, 10, 18, 0.38)
+        );
+        backdrop-filter: blur(calc(3 * var(--u)));
+        -webkit-backdrop-filter: blur(calc(3 * var(--u)));
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      }
+
+      .media-dot {
+        width: calc(0.5 * var(--u));
+        height: calc(0.9 * var(--u));
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        opacity: 0.8;
+        transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease,
+          box-shadow 0.2s ease;
+        box-shadow: 0 0 0 0 rgba(77, 163, 255, 0);
+      }
+
+      .media-dot[aria-current="true"] {
+        background: linear-gradient(180deg, #fff, #e8f1ff);
+        border-color: rgba(255, 255, 255, 0.9);
+        opacity: 1;
+        transform: scale(1.1);
+        box-shadow: 0 0 0 2px rgba(77, 163, 255, 0.25);
+        /* brand-blue halo */
+      }
+
+      /* ---------- Bottom wide nav (prev/next zones) ---------- */
+      .media-bottom-nav {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        gap: calc(0.7 * var(--u));
+        padding: calc(0.6 * var(--u)) calc(0.6 * var(--u));
+        z-index: 3;
+        pointer-events: none;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0) 0%,
+          rgba(0, 0, 0, 0.22) 60%
+        );
+      }
+
+      /* glass buttons that blend with the rest of the site */
+      .media-btn {
+        display: grid;
+        place-items: center;
+        border-radius: calc(1 * var(--u));
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.55),
+          rgba(8, 10, 18, 0.42)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: #e7edff;
+        font-weight: 800;
+        line-height: 1;
+        user-select: none;
+        cursor: pointer;
+        transition: transform 0.15s ease, filter 0.2s ease, background 0.2s ease,
+          border-color 0.2s ease, box-shadow 0.2s ease;
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+      }
+
+      .media-btn--wide {
+        pointer-events: auto;
+        flex: 1;
+        /* stretch across */
+        height: calc(3.2 * var(--u));
+        /* bigger hit area */
+        font-size: clamp(16px, 2vmin, 22px);
+      }
+
+      /* give each side a subtle directional gradient */
+      #mediaPrev.media-btn--wide {
+        background: linear-gradient(
+          90deg,
+          rgba(8, 10, 18, 0.55),
+          rgba(8, 10, 18, 0.38)
+        );
+      }
+
+      #mediaNext.media-btn--wide {
+        background: linear-gradient(
+          -90deg,
+          rgba(8, 10, 18, 0.55),
+          rgba(8, 10, 18, 0.38)
+        );
+      }
+
+      .media-btn:hover {
+        background: linear-gradient(
+          180deg,
+          rgba(12, 16, 28, 0.72),
+          rgba(12, 16, 28, 0.55)
+        );
+        border-color: rgba(255, 255, 255, 0.32);
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35),
+          inset 0 0 0 1px rgba(125, 175, 255, 0.15);
+      }
+
+      /* tiny ripple on active to feel clicky */
+      .media-btn:active {
+        transform: translateY(0);
+        filter: brightness(1);
+      }
+
+      /* mobile: keep controls readable */
+      @media (max-width: 640px) {
+        .media-rail {
+          width: clamp(280px, 42vw, 560px);
+          height: clamp(180px, 24vh, 360px);
+        }
+
+        .media-btn--wide {
+          height: calc(3.8 * var(--u));
+        }
+
+        .media-dots-overlay {
+          transform: translateY(1px);
+        }
+      }
+
+      /* Enlarge toggle button (top-right, glassy) */
+      .media-enlarge-btn {
+        position: absolute;
+        top: calc(0.1 * var(--u));
+        right: calc(0.1 * var(--u));
+        /* stays at the very right */
+        z-index: 4;
+        display: grid;
+        place-items: center;
+        width: calc(2.6 * var(--u));
+        height: calc(2.6 * var(--u));
+        border-radius: calc(0.8 * var(--u));
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.55),
+          rgba(8, 10, 18, 0.38)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: #e7edff;
+        font-weight: 800;
+        line-height: 1;
+        cursor: pointer;
+        user-select: none;
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+        transition: transform 0.15s ease, filter 0.2s ease, background 0.2s ease,
+          border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .media-enlarge-btn:hover {
+        background: linear-gradient(
+          180deg,
+          rgba(12, 16, 28, 0.72),
+          rgba(12, 16, 28, 0.55)
+        );
+        border-color: rgba(255, 255, 255, 0.32);
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+      }
+
+      /* Expanded rail sizing (less than half screen) */
+      .media-rail {
+        transition: width 0.28s ease, height 0.28s ease, transform 0.28s ease,
+          right 0.28s ease, top 0.28s ease;
+        will-change: transform;
+        contain: layout paint;
+        /* isolates layout/paint inside for perf */
+      }
+
+      .media-rail.media-rail--expanded {
+        /* grow but keep under ~1/2 screen; stays fixed in the top-right */
+        width: min(calc(50 * var(--u)), 48vw);
+        height: min(calc(50 * var(--u)), 42vh);
+      }
+
+      /* Make inner content adapt smoothly too */
+      .media-viewport,
+      .media-track,
+      .media-slide {
+        transition: transform 0.28s ease;
+      }
+
+      /* Mobile fallback: enlarged = nearly full width, modest height */
+      @media (max-width: 640px) {
+        .media-rail.media-rail--expanded {
+          left: calc(1.2 * var(--u));
+          /* center it a bit */
+          right: calc(1.2 * var(--u));
+          width: auto;
+          /* fill horizontally within padding */
+          height: clamp(240px, 48vh, 420px);
+          /* comfy, not full-screen */
+        }
+      }
+
+      /* Minimize button (top-right, next to enlarge) */
+      .media-minimize-btn {
+        position: absolute;
+        top: calc(0.8 * var(--u));
+        left: calc(0.8 * var(--u));
+        /* moved from right -> left */
+        right: auto;
+        /* ensure right is unset */
+        z-index: 4;
+        display: grid;
+        place-items: center;
+        width: calc(2.6 * var(--u));
+        height: calc(2.6 * var(--u));
+        border-radius: calc(0.8 * var(--u));
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.55),
+          rgba(8, 10, 18, 0.38)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: #e7edff;
+        font-weight: 800;
+        line-height: 1;
+        cursor: pointer;
+        user-select: none;
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+        transition: transform 0.15s ease, filter 0.2s ease, background 0.2s ease,
+          border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .media-minimize-btn:hover {
+        background: linear-gradient(
+          180deg,
+          rgba(12, 16, 28, 0.72),
+          rgba(12, 16, 28, 0.55)
+        );
+        border-color: rgba(255, 255, 255, 0.32);
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="stage vignette" id="stage">
+      <video
+        id="bg"
+        class="bg-video"
+        src="main_bg.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+      ></video>
+
+      <!-- Top nav -->
+      <nav class="nav" aria-label="Primary">
+        <div class="brand">ERIC&nbsp;LIU</div>
+        <a href="#research">Research</a>
+        <a href="#projects">Projects</a>
+        <a href="#publications">Publications</a>
+        <a href="#aboutme">About Me!</a>
+      </nav>
+
+      <!-- Hero -->
+      <section class="hero hero--with-photo hero--pro">
+        <div class="hero-wrap">
+          <div class="card card--pro" role="banner">
+            <h1 class="title title--pro">
+              <span class="hi">Hi</span> I am Eric!
+            </h1>
+            <p class="subtitle subtitle--pro">
+              <span class="pill">Biomedical Engineering</span> Bachelor (NUS).
+              Research: Primates Spatial Navigation, EEG/MEG/LFP, and IMU
+              trajectory estimation. Currently
+              <span class="pill">co-authoring my first publication</span>.
+            </p>
+          </div>
+          <figure class="profile" aria-label="Portrait">
+            <img src="self.jpg" alt="Eric Liu portrait" class="profile-img" />
+          </figure>
+        </div>
+      </section>
+
+      <!-- Wires -->
+      <svg
+        class="wires"
+        id="wires"
+        viewBox="0 0 600 400"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id="wireGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
+            <stop offset="100%" stop-color="#cde2ff" stop-opacity="0.9" />
+          </linearGradient>
+          <filter id="wireGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation="2.2"
+              result="blur"
+            />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+      </svg>
+
+      <!-- Nodes (anchored as % inside the video) -->
+      <div
+        class="node"
+        data-link="#research"
+        data-label="Research"
+        data-ax="25"
+        data-ay="45"
+      ></div>
+      <div
+        class="node"
+        data-link="#projects"
+        data-label="Projects"
+        data-ax="46"
+        data-ay="44"
+      ></div>
+      <div
+        class="node"
+        data-link="#publications"
+        data-label="Publications"
+        data-ax="41"
+        data-ay="20"
+      ></div>
+      <div
+        class="node"
+        data-link="#contact"
+        data-label="Contact"
+        data-ax="61"
+        data-ay="25"
+      ></div>
+      <div
+        class="node"
+        data-link="#aboutme"
+        data-label="About Me"
+        data-ax="70"
+        data-ay="45"
+      ></div>
+
+      <!-- Contact bar (top-left) -->
+      <div class="contact-bar" aria-label="Contact links">
+        <a
+          class="contact-btn"
+          href="mailto:e0726930@u.nus.edu"
+          target="_blank"
+          title="Email"
+        >
+          <img src="mail_logo.png" alt="Email" />
+        </a>
+        <a
+          class="contact-btn"
+          href="https://www.linkedin.com/in/liu-yuanwei-764827220"
+          target="_blank"
+          title="LinkedIn"
+        >
+          <img src="LinkedIn_logo.png" alt="LinkedIn" />
+        </a>
+        <a
+          class="contact-btn"
+          href="https://github.com/TempReposBN"
+          target="_blank"
+          title="GitHub"
+        >
+          <img src="github_logo.svg" alt="GitHub" />
+        </a>
+        <a
+          class="contact-btn"
+          href="https://www.instagram.com/yuanwei_eric19?igsh=MTVpNDd0MmZhYnQ0ZA=="
+          target="_blank"
+          title="Instagram"
+        >
+          <img src="ig_logo.png" alt="Instagram" />
+        </a>
       </div>
-    </section>
 
-    <!-- Wires -->
-    <svg class="wires" id="wires" viewBox="0 0 600 400" preserveAspectRatio="none" aria-hidden="true">
-      <defs>
-        <linearGradient id="wireGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
-          <stop offset="100%" stop-color="#cde2ff" stop-opacity="0.9" />
-        </linearGradient>
-        <filter id="wireGlow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="2.2" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-    </svg>
+      <!-- Media Rail (top-right) -->
+      <aside class="media-rail" aria-label="Media carousel">
+        <div class="media-viewport" id="mediaViewport">
+          <!-- Top dots only -->
+          <div class="media-dots-overlay">
+            <div
+              class="media-dots"
+              id="mediaDots"
+              role="tablist"
+              aria-label="Slides"
+            ></div>
+          </div>
 
-    <!-- Nodes (anchored as % inside the video) -->
-    <div class="node" data-link="#research" data-label="Research" data-ax="25" data-ay="45"></div>
-    <div class="node" data-link="#projects" data-label="Projects" data-ax="46" data-ay="44"></div>
-    <div class="node" data-link="#publications" data-label="Publications" data-ax="41" data-ay="20"></div>
-    <div class="node" data-link="#contact" data-label="Contact" data-ax="61" data-ay="25"></div>
-    <div class="node" data-link="#aboutme" data-label="About Me" data-ax="70" data-ay="45"></div>
+          <!-- Slides -->
+          <div class="media-track" id="mediaTrack" role="list"></div>
 
-    <!-- Contact bar (top-left) -->
-    <div class="contact-bar" aria-label="Contact links">
-      <a class="contact-btn" href="mailto:e0726930@u.nus.edu" target="_blank" title="Email">
-        <img src="mail_logo.png" alt="Email">
-      </a>
-      <a class="contact-btn" href="https://www.linkedin.com/in/liu-yuanwei-764827220" target="_blank" title="LinkedIn">
-        <img src="LinkedIn_logo.png" alt="LinkedIn">
-      </a>
-      <a class="contact-btn" href="https://github.com/TempReposBN" target="_blank" title="GitHub">
-        <img src="github_logo.svg" alt="GitHub">
-      </a>
-      <a class="contact-btn" href="https://www.instagram.com/yuanwei_eric19?igsh=MTVpNDd0MmZhYnQ0ZA==" target="_blank" title="Instagram">
-        <img src="ig_logo.png" alt="Instagram">
-      </a>
-    </div>
-
-    <!-- Media Rail (top-right) -->
-    <aside class="media-rail" aria-label="Media carousel">
-      <div class="media-viewport" id="mediaViewport">
-        <!-- Top dots only -->
-        <div class="media-dots-overlay">
-          <div class="media-dots" id="mediaDots" role="tablist" aria-label="Slides"></div>
-        </div>
-
-        <!-- Slides -->
-        <div class="media-track" id="mediaTrack" role="list"></div>
-
-        <!-- Bottom wide nav -->
-        <div class="media-bottom-nav" aria-label="Media navigation">
-          <button class="media-btn media-btn--wide" id="mediaPrev" aria-label="Previous" type="button">‹</button>
-          <button class="media-btn media-btn--wide" id="mediaNext" aria-label="Next" type="button">›</button>
-        </div>
-        <button
-          class="media-enlarge-btn"
-          id="mediaEnlarge"
-          type="button"
-          aria-label="Enlarge media"
-          aria-pressed="false"
-          title="Enlarge"
-        >⤢</button>
+          <!-- Bottom wide nav -->
+          <div class="media-bottom-nav" aria-label="Media navigation">
+            <button
+              class="media-btn media-btn--wide"
+              id="mediaPrev"
+              aria-label="Previous"
+              type="button"
+            >
+              ‹
+            </button>
+            <button
+              class="media-btn media-btn--wide"
+              id="mediaNext"
+              aria-label="Next"
+              type="button"
+            >
+              ›
+            </button>
+          </div>
+          <button
+            class="media-enlarge-btn"
+            id="mediaEnlarge"
+            type="button"
+            aria-label="Enlarge media"
+            aria-pressed="false"
+            title="Enlarge"
+          >
+            ⤢
+          </button>
         </div>
 
         <button
@@ -926,549 +1640,915 @@
           aria-label="Minimize media"
           aria-pressed="false"
           title="Minimize"
-        >–</button>
+        >
+          –
+        </button>
+      </aside>
 
-    </aside>
+      <button
+        class="media-tab"
+        id="mediaTab"
+        type="button"
+        aria-label="Open media"
+        title="Maximise Media Display"
+      >
+        <!-- Use your own logo asset here -->
+        <img src="max_tab.png" alt="Maximise Media Display" />
+        <!-- Fallback text if image fails -->
+        <span class="media-tab__fallback">OPEN</span>
+      </button>
 
-    <button
-      class="media-tab"
-      id="mediaTab"
-      type="button"
-      aria-label="Open media"
-      title="Maximise Media Display"
-    >
-      <!-- Use your own logo asset here -->
-      <img src="max_tab.png" alt="Maximise Media Display">
-      <!-- Fallback text if image fails -->
-      <span class="media-tab__fallback">OPEN</span>
-    </button>
-
-    <div class="footer">© <span id="y"></span> Eric Liu • Made with HTML/CSS/JS</div>
+      <div class="footer">
+        © <span id="y"></span> Eric Liu • Made with HTML/CSS/JS
+      </div>
+      <div class="stage-edge stage-edge--bottom"></div>
     </div>
 
-<script>
-  // Footer year
-  document.getElementById('y').textContent = new Date().getFullYear();
+    <!-- ===== Stage 2 (new) ===== -->
+    <div class="stage vignette" id="stage-2" data-theme="blue">
 
-  // ====== MEDIA RAIL: init once ======
-  (function initMediaRail() {
-    const media = [
-      // Replace with your real assets
-      { type: 'img', src: 'media/1.jpg' },
-      { type: 'img', src: 'media/2.jpg' },
-      { type: 'img', src: 'media/3.jpg' },
-      { type: 'img', src: 'media/4.jpg' },
-      { type: 'img', src: 'media/5.jpg' },
-      { type: 'img', src: 'media/6.jpg' },
-      { type: 'img', src: 'media/7.jpg' },
-      { type: 'img', src: 'media/8.jpg' },
-      { type: 'img', src: 'media/9.jpg' },
-      { type: 'img', src: 'media/10.jpg' },
-      { type: 'img', src: 'media/11.jpg' },
-      { type: 'img', src: 'media/12.jpg' },
-      { type: 'img', src: 'media/13.jpg' },
-      { type: 'video', src: 'media/v1.mp4' },
-      { type: 'video', src: 'media/v2.mp4' },
-    ];
+      <video
+        class="bg-video"
+        src="main2_bg.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+      ></video>
 
-    const track    = document.getElementById('mediaTrack');
-    const dots     = document.getElementById('mediaDots');
-    const prevBtn  = document.getElementById('mediaPrev');
-    const nextBtn  = document.getElementById('mediaNext');
-    const viewport = document.getElementById('mediaViewport');
+      <div class="stage-edge stage-edge--top"></div>
 
-    // Guard: if elements missing, bail
-    if (!track || !dots || !prevBtn || !nextBtn || !viewport) return;
+      <!-- Wires -->
+      <svg
+        class="wires"
+        viewBox="0 0 600 400"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id="wireGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
+            <stop offset="100%" stop-color="#cde2ff" stop-opacity="0.9" />
+          </linearGradient>
+          <filter id="wireGlow2" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation="2.2"
+              result="blur"
+            />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+      </svg>
 
-    // Build slides & dots once
-    track.innerHTML = '';
-    dots.innerHTML = '';
+      <!-- NEW WRAPPER: keeps heading at top, centers board below -->
+      <div class="stage2-wrap">
+        <section class="hero" aria-labelledby="researchBoardTitle">
+          <div
+            class="card reveal"
+            role="banner"
+            style="margin-bottom: clamp(10px, 2vmin, 18px)"
+          >
+            <h1 id="researchBoardTitle" class="title">Research Projects</h1>
+          </div>
+        </section>
 
-    media.forEach((m, i) => {
-      const item = document.createElement('div');
-      item.className = 'media-slide';
-      item.setAttribute('role', 'listitem');
+        <div class="research-board" role="list">
+          <!-- Column 1 -->
+          <div
+            class="research-col"
+            style="--stagger: 0px"
+            role="group"
+            aria-label="Project 1"
+          >
+            <article class="tile tile--pic" role="listitem">
+              <div class="tile__placeholder">
+                VR maze setup for primate navigation
+              </div>
+            </article>
+            <article class="tile tile--text">
+              <div class="tile__eyebrow">Project 1</div>
+              <h3 class="tile__title">
+                Hippocampal Theta During Goal-Directed Navigation
+              </h3>
+              <p>
+                We analyze theta-band dynamics while subjects traverse virtual
+                mazes under changing reward contingencies. Emphasis on
+                phase-precession and path-planning correlates.
+              </p>
+              <div class="badges">
+                <span class="badge">Theta (4 - 8 Hz)</span>
+                <span class="badge">Signal Processing</span>
+                <span class="badge">Spatial Recall</span>
+                <span class="badge">Primate VR</span>
+              </div>
+              <div class="tile__meta">EEG/LFP • Python • Unity Engine</div>
+            </article>
 
-      if (m.type === 'video') {
-        const v = document.createElement('video');
-        v.src = m.src;
-        v.muted = true;
-        v.loop = true;
-        v.playsInline = true;
-        v.autoplay = true;
-        v.setAttribute('aria-label', m.alt || `Slide ${i + 1}`);
-        // Some mobile browsers need an explicit play() after attaching:
-        v.addEventListener('canplay', () => { try { v.play(); } catch {} }, { once: true });
-        item.appendChild(v);
-      } else {
-        const img = new Image();
-        img.src = m.src;
-        img.alt = m.alt || `Slide ${i + 1}`;
-        item.appendChild(img);
-      }
-      track.appendChild(item);
+            <article class="tile tile--pic">
+              <img
+                src="self.jpg"
+                alt="Theta power maps across maze segments"
+                loading="lazy"
+              />
+            </article>
+          </div>
 
-      const dot = document.createElement('button');
-      dot.className = 'media-dot';
-      dot.type = 'button';
-      dot.setAttribute('role', 'tab');
-      dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
-      dot.addEventListener('click', () => goTo(i, true));
-      dots.appendChild(dot);
-    });
+          <!-- Column 2 -->
+          <div
+            class="research-col"
+            style="--stagger: 20px"
+            role="group"
+            aria-label="Project 2"
+          >
+            <article class="tile tile--pic">
+              <div class="tile__placeholder">Foot-mounted IMU hardware</div>
+            </article>
+            <article class="tile tile--text">
+              <div class="tile__eyebrow">Project 2</div>
+              <h3 class="tile__title">
+                Robust Foot-Mounted IMU Trajectory Estimation
+              </h3>
+              <p>
+                A zero-velocity-aided pipeline with RTS-Kalman smoothing and
+                soft stance detection to curb drift during long indoor walks.
+                Benchmarked with Bland–Altman analysis.
+              </p>
+              <div class="badges">
+                <span class="badge">RTS-Kalman</span>
+                <span class="badge">VQF</span>
+                <span class="badge">ZUPT</span>
+                <span class="badge">Event Detection</span>
+                <span class="badge">Gait</span>
+              </div>
+              <div class="tile__meta">
+                C++/Arduino • Python • Experiment Running • IMU Algo
+              </div>
+            </article>
+            <article class="tile tile--pic">
+              <img
+                src="self.jpg"
+                alt="Recovered walking path from IMU data"
+                loading="lazy"
+              />
+            </article>
+          </div>
 
-    let idx = 0;
-    let timer = null;
-    const AUTOPLAY_MS = 4200;
+          <!-- Column 3 -->
+          <div
+            class="research-col"
+            style="--stagger: 10px"
+            role="group"
+            aria-label="Project 3"
+          >
+            <article class="tile tile--pic">
+              <div class="tile__placeholder">
+                EEG Response from Subjects for Touch
+              </div>
+            </article>
+            <article class="tile tile--text">
+              <div class="tile__eyebrow">Project 3</div>
+              <h3 class="tile__title">Active and Passive Touch with EEG</h3>
+              <p>
+                Multimodal decoding of place/goal context using regularized
+                classifiers and time-generalization matrices; probing
+                cross-frequency coupling as a driver.
+              </p>
+              <div class="badges">
+                <span class="badge">Signal Processing</span>
+                <span class="badge">ICA</span>
+                <span class="badge">EEG/ERP</span>
+              </div>
+              <div class="tile__meta">Scikit-learn (CV) • MNE • ICA</div>
+            </article>
+            <article class="tile tile--pic">
+              <img
+                src="self.jpg"
+                alt="Time-generalization matrix heatmap"
+                loading="lazy"
+              />
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    function updateUI() {
-      track.style.transform = `translateX(${-idx * 100}%)`;
-      Array.from(dots.children).forEach((d, i) =>
-        d.setAttribute('aria-current', i === idx ? 'true' : 'false')
-      );
+    <!-- ===== Stage 3 (new) ===== -->
+    <div class="stage vignette" id="stage-3" data-theme="purple">
+      <video
+        class="bg-video"
+        src="stage3_bg.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+      ></video>
 
-      // Ensure only current video plays (pause others)
-      const slides = track.querySelectorAll('.media-slide');
-      slides.forEach((slide, i) => {
-        const v = slide.querySelector('video');
-        if (v) {
-          if (i === idx) { try { v.play(); } catch {} }
-          else { v.pause(); v.currentTime = 0; }
+      <svg
+        class="wires"
+        viewBox="0 0 600 400"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id="wireGradient3" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
+            <stop offset="100%" stop-color="#cde2ff" stop-opacity="0.9" />
+          </linearGradient>
+          <filter id="wireGlow3" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation="2.2"
+              result="blur"
+            />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+      </svg>
+
+      <div
+        class="node"
+        data-link="#aboutme"
+        data-label="About Me"
+        data-ax="30"
+        data-ay="60"
+      ></div>
+      <div
+        class="node"
+        data-link="#contact"
+        data-label="Contact"
+        data-ax="72"
+        data-ay="34"
+      ></div>
+
+      <section class="hero">
+        <div class="card reveal" role="banner">
+          <h1 class="title">Engineering in Practice</h1>
+          <p class="subtitle">
+            From calibration pipelines to Bland–Altman analytics and RTS-Kalman
+            gait estimation, I blend engineering rigor with translational
+            impact.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // Footer year
+      document.getElementById("y").textContent = new Date().getFullYear();
+
+      // ====== MEDIA RAIL: init once ======
+      (function initMediaRail() {
+        const media = [
+          // Replace with your real assets
+          { type: "img", src: "media/1.jpg" },
+          { type: "img", src: "media/2.jpg" },
+          { type: "img", src: "media/3.jpg" },
+          { type: "img", src: "media/4.jpg" },
+          { type: "img", src: "media/5.jpg" },
+          { type: "img", src: "media/6.jpg" },
+          { type: "img", src: "media/7.jpg" },
+          { type: "img", src: "media/8.jpg" },
+          { type: "img", src: "media/9.jpg" },
+          { type: "img", src: "media/10.jpg" },
+          { type: "img", src: "media/11.jpg" },
+          { type: "img", src: "media/12.jpg" },
+          { type: "img", src: "media/13.jpg" },
+          { type: "video", src: "media/v1.mp4" },
+          { type: "video", src: "media/v2.mp4" },
+        ];
+
+        const track = document.getElementById("mediaTrack");
+        const dots = document.getElementById("mediaDots");
+        const prevBtn = document.getElementById("mediaPrev");
+        const nextBtn = document.getElementById("mediaNext");
+        const viewport = document.getElementById("mediaViewport");
+
+        // Guard: if elements missing, bail
+        if (!track || !dots || !prevBtn || !nextBtn || !viewport) return;
+
+        // Build slides & dots once
+        track.innerHTML = "";
+        dots.innerHTML = "";
+
+        media.forEach((m, i) => {
+          const item = document.createElement("div");
+          item.className = "media-slide";
+          item.setAttribute("role", "listitem");
+
+          if (m.type === "video") {
+            const v = document.createElement("video");
+            v.src = m.src;
+            v.muted = true;
+            v.loop = true;
+            v.playsInline = true;
+            v.autoplay = true;
+            v.setAttribute("aria-label", m.alt || `Slide ${i + 1}`);
+            // Some mobile browsers need an explicit play() after attaching:
+            v.addEventListener(
+              "canplay",
+              () => {
+                try {
+                  v.play();
+                } catch {}
+              },
+              { once: true }
+            );
+            item.appendChild(v);
+          } else {
+            const img = new Image();
+            img.src = m.src;
+            img.alt = m.alt || `Slide ${i + 1}`;
+            item.appendChild(img);
+          }
+          track.appendChild(item);
+
+          const dot = document.createElement("button");
+          dot.className = "media-dot";
+          dot.type = "button";
+          dot.setAttribute("role", "tab");
+          dot.setAttribute("aria-label", `Go to slide ${i + 1}`);
+          dot.addEventListener("click", () => goTo(i, true));
+          dots.appendChild(dot);
+        });
+
+        let idx = 0;
+        let timer = null;
+        const AUTOPLAY_MS = 4200;
+
+        function updateUI() {
+          track.style.transform = `translateX(${-idx * 100}%)`;
+          Array.from(dots.children).forEach((d, i) =>
+            d.setAttribute("aria-current", i === idx ? "true" : "false")
+          );
+
+          // Ensure only current video plays (pause others)
+          const slides = track.querySelectorAll(".media-slide");
+          slides.forEach((slide, i) => {
+            const v = slide.querySelector("video");
+            if (v) {
+              if (i === idx) {
+                try {
+                  v.play();
+                } catch {}
+              } else {
+                v.pause();
+                v.currentTime = 0;
+              }
+            }
+          });
         }
-      });
-    }
 
-    function goTo(i, user = false) {
-      idx = (i + media.length) % media.length;
-      updateUI();
-      if (user) restartAutoplay();
-    }
-
-    function nextSlide(user = false) { goTo(idx + 1, user); }
-    function prevSlide(user = false) { goTo(idx - 1, user); }
-
-    function startAutoplay() {
-      stopAutoplay();
-      timer = setInterval(() => nextSlide(false), AUTOPLAY_MS);
-    }
-    function stopAutoplay() {
-      if (timer) { clearInterval(timer); timer = null; }
-    }
-    function restartAutoplay() { startAutoplay(); }
-
-    // Initial draw + autoplay
-    updateUI();
-    startAutoplay();
-
-    // Controls
-    nextBtn.addEventListener('click', () => nextSlide(true));
-    prevBtn.addEventListener('click', () => prevSlide(true));
-
-    // Pause on hover/focus, resume on leave/blur
-    ['mouseenter', 'focusin'].forEach(ev => viewport.addEventListener(ev, stopAutoplay));
-    ['mouseleave', 'focusout'].forEach(ev => viewport.addEventListener(ev, startAutoplay));
-
-    // Keyboard nav (when rail is focused)
-    document.querySelector('.media-rail').addEventListener('keydown', e => {
-      if (e.key === 'ArrowRight') { e.preventDefault(); nextSlide(true); }
-      if (e.key === 'ArrowLeft')  { e.preventDefault(); prevSlide(true); }
-    });
-
-    // Touch swipe
-    let touchX = null;
-    viewport.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
-    viewport.addEventListener('touchend', e => {
-      if (touchX == null) return;
-      const dx = e.changedTouches[0].clientX - touchX;
-      const TH = Math.max(30, window.innerWidth * 0.04);
-      if (dx >  TH) prevSlide(true);
-      if (dx < -TH) nextSlide(true);
-      touchX = null;
-    }, { passive: true });
-
-    // Reduce work in background tabs
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) stopAutoplay();
-      else startAutoplay();
-    });
-  })();
-
-  // ====== BACKGROUND / NODES / WIRES: keep rAF here ======
-  (function () {
-    const stage  = document.getElementById('stage');
-    const bg     = document.getElementById('bg');
-    const wires  = document.getElementById('wires');
-    const nodes  = Array.from(stage.querySelectorAll('.node'));
-
-    // Slow the background video gently
-    function setPlaybackSpeed() { try { bg.playbackRate = 0.8; } catch {} }
-    bg.addEventListener('loadedmetadata', setPlaybackSpeed, { once: true });
-    bg.addEventListener('canplay', () => {
-      setPlaybackSpeed();
-      const p = bg.play();
-      if (p?.then) p.catch(() => {});
-    }, { once: true });
-
-    const R = el => el.getBoundingClientRect();
-
-    // Build wires once
-    const lineEls = [];
-    function buildLines() {
-      // keep <defs>, clear old lines
-      const defs = wires.querySelector('defs');
-      wires.innerHTML = defs ? defs.outerHTML : '';
-      for (let i = 0; i < nodes.length - 1; i++) {
-        const L = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        L.setAttribute('class', 'wire');
-        wires.appendChild(L);
-        lineEls.push(L);
-      }
-    }
-    buildLines();
-
-    // Tooltips / plates / click
-    nodes.forEach(n => {
-      const label = n.dataset.label;
-      const link  = n.dataset.link;
-      if (label && !n.querySelector('.node-menu')) {
-        const m = document.createElement('div');
-        m.className = 'node-menu';
-        m.innerHTML = link ? `<a href="${link}">${label}</a>` : label;
-        n.appendChild(m);
-      }
-      if (!n.querySelector('.plate')) {
-        const plate = document.createElement('span');
-        plate.className = 'plate';
-        n.prepend(plate);
-      }
-      n.addEventListener('click', () => { if (link) window.location.hash = link; });
-    });
-
-    // Drift profiles
-    const profiles = nodes.map(el => {
-      const r  = 9 + Math.random() * 16;
-      const sp = 0.35 + Math.random() * 0.55;
-      return {
-        el,
-        rx: r, ry: r * (0.55 + Math.random() * 0.55),
-        speed: sp,
-        pX: Math.random() * Math.PI * 2,
-        pY: Math.random() * Math.PI * 2,
-        ax: parseFloat(el.dataset.ax) / 100,
-        ay: parseFloat(el.dataset.ay) / 100
-      };
-    });
-
-    function syncSvg() {
-      const s = R(stage);
-      wires.setAttribute('viewBox', `0 0 ${s.width} ${s.height}`);
-    }
-    addEventListener('resize', syncSvg, { passive: true });
-    syncSvg();
-
-    let t0 = null;
-    function tick(ts) {
-      if (!t0) t0 = ts;
-      const t = (ts - t0) / 1000;
-
-      const sRect = R(stage);
-      const vRect = R(bg);
-
-      // Position nodes with drift
-      profiles.forEach(p => {
-        const bx = vRect.left - sRect.left + p.ax * vRect.width;
-        const by = vRect.top - sRect.top + p.ay * vRect.height;
-
-        const dx = Math.cos(t * p.speed + p.pX) * p.rx;
-        const dy = Math.sin(t * (p.speed * 0.85) + p.pY) * p.ry;
-
-        const w = p.el.offsetWidth, h = p.el.offsetHeight;
-        p.el.style.left = (bx - w / 2) + 'px';
-        p.el.style.top  = (by - h / 2) + 'px';
-        p.el.style.setProperty('--tx', dx.toFixed(2) + 'px');
-        p.el.style.setProperty('--ty', dy.toFixed(2) + 'px');
-
-        // Flip tooltip if too close to top
-        const menu = p.el.querySelector('.node-menu');
-        if (menu) {
-          const nr = R(p.el);
-          if (nr.top < 90) menu.classList.add('below');
-          else menu.classList.remove('below');
+        function goTo(i, user = false) {
+          idx = (i + media.length) % media.length;
+          updateUI();
+          if (user) restartAutoplay();
         }
-      });
 
-      // Wire endpoints
-      const centers = nodes.map(n => {
-        const r = R(n);
-        return { x: r.left - sRect.left + r.width / 2, y: r.top - sRect.top + r.height / 2 };
-      });
-      for (let i = 0; i < lineEls.length; i++) {
-        const a = centers[i], b = centers[i + 1], L = lineEls[i];
-        L.setAttribute('x1', a.x); L.setAttribute('y1', a.y);
-        L.setAttribute('x2', b.x); L.setAttribute('y2', b.y);
-      }
+        function nextSlide(user = false) {
+          goTo(idx + 1, user);
+        }
+        function prevSlide(user = false) {
+          goTo(idx - 1, user);
+        }
 
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  })();
+        function startAutoplay() {
+          stopAutoplay();
+          timer = setInterval(() => nextSlide(false), AUTOPLAY_MS);
+        }
+        function stopAutoplay() {
+          if (timer) {
+            clearInterval(timer);
+            timer = null;
+          }
+        }
+        function restartAutoplay() {
+          startAutoplay();
+        }
 
-  (function () {
-    const rail = document.querySelector('.media-rail');
-    const btn  = document.getElementById('mediaEnlarge');
+        // Initial draw + autoplay
+        updateUI();
+        startAutoplay();
 
-    if (!rail || !btn) return;
+        // Controls
+        nextBtn.addEventListener("click", () => nextSlide(true));
+        prevBtn.addEventListener("click", () => prevSlide(true));
 
-    // Optional: remember last state
-    const KEY = 'mediaRailExpanded';
-    const saved = localStorage.getItem(KEY);
-    if (saved === '1') {
-      rail.classList.add('media-rail--expanded');
-      btn.setAttribute('aria-pressed', 'true');
-      btn.title = 'Shrink';
-      btn.textContent = '⤡';
-    }
+        // Pause on hover/focus, resume on leave/blur
+        ["mouseenter", "focusin"].forEach((ev) =>
+          viewport.addEventListener(ev, stopAutoplay)
+        );
+        ["mouseleave", "focusout"].forEach((ev) =>
+          viewport.addEventListener(ev, startAutoplay)
+        );
 
-    btn.addEventListener('click', () => {
-      const expanded = rail.classList.toggle('media-rail--expanded');
-      btn.setAttribute('aria-pressed', expanded ? 'true' : 'false');
-      btn.title = expanded ? 'Shrink' : 'Enlarge';
-      btn.textContent = expanded ? '⤡' : '⤢';
-      try { localStorage.setItem(KEY, expanded ? '1' : '0'); } catch {}
-    });
-  })();
+        // Keyboard nav (when rail is focused)
+        document
+          .querySelector(".media-rail")
+          .addEventListener("keydown", (e) => {
+            if (e.key === "ArrowRight") {
+              e.preventDefault();
+              nextSlide(true);
+            }
+            if (e.key === "ArrowLeft") {
+              e.preventDefault();
+              prevSlide(true);
+            }
+          });
 
-  (function makeMediaRailDraggable(){
-    const rail   = document.querySelector('.media-rail');
-    const handle = document.getElementById('mediaViewport');
-    if (!rail || !handle) return;
+        // Touch swipe
+        let touchX = null;
+        viewport.addEventListener(
+          "touchstart",
+          (e) => {
+            touchX = e.touches[0].clientX;
+          },
+          { passive: true }
+        );
+        viewport.addEventListener(
+          "touchend",
+          (e) => {
+            if (touchX == null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            const TH = Math.max(30, window.innerWidth * 0.04);
+            if (dx > TH) prevSlide(true);
+            if (dx < -TH) nextSlide(true);
+            touchX = null;
+          },
+          { passive: true }
+        );
 
-    const POS_KEY = 'mediaRailPos';   // persist pixels {x, y}
-    const pad = 8;                    // viewport padding
-    let posX = 0, posY = 0;           // current transform position
-    let tgtX = 0, tgtY = 0;           // target (updated on move)
-    let dragging = false;
-    let rafId = null;
-    let lastW = 0, lastH = 0;
+        // Reduce work in background tabs
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) stopAutoplay();
+          else startAutoplay();
+        });
+      })();
 
-    // ---- helpers
-    const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-    const applyTransform = () => { rail.style.transform = `translate3d(${posX}px, ${posY}px, 0)`; };
+      // ====== BACKGROUND / NODES / WIRES: keep rAF here ======
+      (function () {
+        const stage = document.getElementById("stage");
+        const bg = document.getElementById("bg");
+        const wires = document.getElementById("wires");
+        const nodes = Array.from(stage.querySelectorAll(".node"));
 
-    // Convert current fixed left/top/right into transform baseline once
-    function initBaseline() {
-      const r = rail.getBoundingClientRect();
-      // Set fixed origin at (0,0) and keep visual position in transform:
-      rail.style.left = '0px';
-      rail.style.top  = '0px';
-      rail.style.right = 'auto';
-      rail.style.bottom = 'auto';
-      posX = tgtX = r.left;
-      posY = tgtY = r.top;
-      applyTransform();
-    }
+        // Slow the background video gently
+        function setPlaybackSpeed() {
+          try {
+            bg.playbackRate = 0.8;
+          } catch {}
+        }
+        bg.addEventListener("loadedmetadata", setPlaybackSpeed, { once: true });
+        bg.addEventListener(
+          "canplay",
+          () => {
+            setPlaybackSpeed();
+            const p = bg.play();
+            if (p?.then) p.catch(() => {});
+          },
+          { once: true }
+        );
 
-    // Bounds depending on viewport and rail size
-    function bounds() {
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      const rw = rail.offsetWidth;
-      const rh = rail.offsetHeight;
-      return {
-        minX: pad,
-        maxX: vw - rw - pad,
-        minY: pad,
-        maxY: vh - rh - pad
-      };
-    }
+        const R = (el) => el.getBoundingClientRect();
 
-    // Smooth animation loop (lerp towards target)
-    function loop() {
-      const LERP = 0.5; // increase for snappier, decrease for more floaty
-      const dx = tgtX - posX;
-      const dy = tgtY - posY;
-      // Snap if tiny to avoid micro-jitter
-      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) {
-        posX = tgtX; posY = tgtY;
-      } else {
-        posX += dx * LERP;
-        posY += dy * LERP;
-      }
-      applyTransform();
-      rafId = requestAnimationFrame(loop);
-    }
+        // Build wires once
+        const lineEls = [];
+        function buildLines() {
+          // keep <defs>, clear old lines
+          const defs = wires.querySelector("defs");
+          wires.innerHTML = defs ? defs.outerHTML : "";
+          for (let i = 0; i < nodes.length - 1; i++) {
+            const L = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "line"
+            );
+            L.setAttribute("class", "wire");
+            wires.appendChild(L);
+            lineEls.push(L);
+          }
+        }
+        buildLines();
 
-    // Persist to localStorage
-    function save() {
-      try { localStorage.setItem(POS_KEY, JSON.stringify({ x: Math.round(tgtX), y: Math.round(tgtY) })); } catch {}
-    }
+        // Tooltips / plates / click
+        nodes.forEach((n) => {
+          const label = n.dataset.label;
+          const link = n.dataset.link;
+          if (label && !n.querySelector(".node-menu")) {
+            const m = document.createElement("div");
+            m.className = "node-menu";
+            m.innerHTML = link ? `<a href="${link}">${label}</a>` : label;
+            n.appendChild(m);
+          }
+          if (!n.querySelector(".plate")) {
+            const plate = document.createElement("span");
+            plate.className = "plate";
+            n.prepend(plate);
+          }
+          n.addEventListener("click", () => {
+            if (link) window.location.hash = link;
+          });
+        });
 
-    // Restore saved position (after baseline so transform is authoritative)
-    function restore() {
-      try {
-        const saved = JSON.parse(localStorage.getItem(POS_KEY) || 'null');
-        if (saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)) {
-          const b = bounds();
-          tgtX = clamp(saved.x, b.minX, b.maxX);
-          tgtY = clamp(saved.y, b.minY, b.maxY);
-          posX = tgtX; posY = tgtY;
+        // Drift profiles
+        const profiles = nodes.map((el) => {
+          const r = 9 + Math.random() * 16;
+          const sp = 0.35 + Math.random() * 0.55;
+          return {
+            el,
+            rx: r,
+            ry: r * (0.55 + Math.random() * 0.55),
+            speed: sp,
+            pX: Math.random() * Math.PI * 2,
+            pY: Math.random() * Math.PI * 2,
+            ax: parseFloat(el.dataset.ax) / 100,
+            ay: parseFloat(el.dataset.ay) / 100,
+          };
+        });
+
+        function syncSvg() {
+          const s = R(stage);
+          wires.setAttribute("viewBox", `0 0 ${s.width} ${s.height}`);
+        }
+        addEventListener("resize", syncSvg, { passive: true });
+        syncSvg();
+
+        let t0 = null;
+        function tick(ts) {
+          if (!t0) t0 = ts;
+          const t = (ts - t0) / 1000;
+
+          const sRect = R(stage);
+          const vRect = R(bg);
+
+          // Position nodes with drift
+          profiles.forEach((p) => {
+            const bx = vRect.left - sRect.left + p.ax * vRect.width;
+            const by = vRect.top - sRect.top + p.ay * vRect.height;
+
+            const dx = Math.cos(t * p.speed + p.pX) * p.rx;
+            const dy = Math.sin(t * (p.speed * 0.85) + p.pY) * p.ry;
+
+            const w = p.el.offsetWidth,
+              h = p.el.offsetHeight;
+            p.el.style.left = bx - w / 2 + "px";
+            p.el.style.top = by - h / 2 + "px";
+            p.el.style.setProperty("--tx", dx.toFixed(2) + "px");
+            p.el.style.setProperty("--ty", dy.toFixed(2) + "px");
+
+            // Flip tooltip if too close to top
+            const menu = p.el.querySelector(".node-menu");
+            if (menu) {
+              const nr = R(p.el);
+              if (nr.top < 90) menu.classList.add("below");
+              else menu.classList.remove("below");
+            }
+          });
+
+          // Wire endpoints
+          const centers = nodes.map((n) => {
+            const r = R(n);
+            return {
+              x: r.left - sRect.left + r.width / 2,
+              y: r.top - sRect.top + r.height / 2,
+            };
+          });
+          for (let i = 0; i < lineEls.length; i++) {
+            const a = centers[i],
+              b = centers[i + 1],
+              L = lineEls[i];
+            L.setAttribute("x1", a.x);
+            L.setAttribute("y1", a.y);
+            L.setAttribute("x2", b.x);
+            L.setAttribute("y2", b.y);
+          }
+
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      })();
+
+      (function () {
+        const rail = document.querySelector(".media-rail");
+        const btn = document.getElementById("mediaEnlarge");
+
+        if (!rail || !btn) return;
+
+        // Optional: remember last state
+        const KEY = "mediaRailExpanded";
+        const saved = localStorage.getItem(KEY);
+        if (saved === "1") {
+          rail.classList.add("media-rail--expanded");
+          btn.setAttribute("aria-pressed", "true");
+          btn.title = "Shrink";
+          btn.textContent = "⤡";
+        }
+
+        btn.addEventListener("click", () => {
+          const expanded = rail.classList.toggle("media-rail--expanded");
+          btn.setAttribute("aria-pressed", expanded ? "true" : "false");
+          btn.title = expanded ? "Shrink" : "Enlarge";
+          btn.textContent = expanded ? "⤡" : "⤢";
+          try {
+            localStorage.setItem(KEY, expanded ? "1" : "0");
+          } catch {}
+        });
+      })();
+
+      (function bootstrapMediaMinimized() {
+        const KEY_MIN = "mediaRailMinimized";
+        const rail = document.querySelector(".media-rail");
+        const tab = document.getElementById("mediaTab");
+        if (!rail || !tab) return;
+
+        // First visit → default to minimized
+        if (localStorage.getItem(KEY_MIN) === null) {
+          try {
+            localStorage.setItem(KEY_MIN, "1");
+          } catch {}
+        }
+
+        // Apply current preference immediately so later scripts see the right state
+        const min = localStorage.getItem(KEY_MIN) === "1";
+        rail.classList.toggle("is-hidden", min);
+        tab.classList.toggle("is-visible", min);
+      })();
+
+      (function makeMediaRailDraggable() {
+        const rail = document.querySelector(".media-rail");
+        const handle = document.getElementById("mediaViewport");
+        if (!rail || !handle) return;
+
+        const POS_KEY = "mediaRailPos"; // persist pixels {x, y}
+        const pad = 8; // viewport padding
+        let posX = 0,
+          posY = 0; // current transform position
+        let tgtX = 0,
+          tgtY = 0; // target (updated on move)
+        let dragging = false;
+        let rafId = null;
+        let lastW = 0,
+          lastH = 0;
+
+        // ---- helpers
+        const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+        const applyTransform = () => {
+          rail.style.transform = `translate3d(${posX}px, ${posY}px, 0)`;
+        };
+
+        // Convert current fixed left/top/right into transform baseline once
+        function initBaseline() {
+          const r = rail.getBoundingClientRect();
+          // Set fixed origin at (0,0) and keep visual position in transform:
+          rail.style.left = "0px";
+          rail.style.top = "0px";
+          rail.style.right = "auto";
+          rail.style.bottom = "auto";
+          posX = tgtX = r.left;
+          posY = tgtY = r.top;
           applyTransform();
         }
-      } catch {}
-    }
 
-    // Start drag anywhere in the viewport (images/videos are pointer-events:none already)
-    let startX = 0, startY = 0, startTX = 0, startTY = 0;
-    function onPointerDown(e) {
-      // avoid starting a drag on interactive UI
-      if (e.target.closest('button, .media-dots, .media-bottom-nav, a, input, textarea, select')) return;
-
-      dragging = true;
-      handle.classList.add('is-dragging');
-      startX = e.clientX;
-      startY = e.clientY;
-      startTX = tgtX;
-      startTY = tgtY;
-
-      handle.setPointerCapture?.(e.pointerId);
-      window.addEventListener('pointermove', onPointerMove, { passive: false });
-      window.addEventListener('pointerup', onPointerUp, { passive: true });
-
-      // Kick the loop if not running
-      if (!rafId) rafId = requestAnimationFrame(loop);
-    }
-
-    function onPointerMove(e) {
-      if (!dragging) return;
-      e.preventDefault(); // no text/image drag
-      const b = bounds();
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
-      tgtX = clamp(startTX + dx, b.minX, b.maxX);
-      tgtY = clamp(startTY + dy, b.minY, b.maxY);
-    }
-
-    function onPointerUp() {
-      if (!dragging) return;
-      dragging = false;
-      handle.classList.remove('is-dragging');
-      window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('pointerup', onPointerUp);
-      save();
-    }
-
-    // Re-clamp if window resizes so it never goes off-screen
-    function onResize() {
-      // NEW: don’t change position while minimized to the tab
-      if (rail.classList.contains('is-hidden')) return;
-
-      const r = rail.getBoundingClientRect();
-      const b = bounds();
-      tgtX = clamp(r.left, b.minX, b.maxX);
-      tgtY = clamp(r.top,  b.minY, b.maxY);
-      posX = tgtX; posY = tgtY; 
-      applyTransform(); 
-      save();
-
-      if (!rafId) rafId = requestAnimationFrame(loop);
-    }
-
-    // Prevent native drag ghost
-    handle.addEventListener('dragstart', e => e.preventDefault());
-
-    // Init flow
-    initBaseline();
-    restore();
-    handle.addEventListener('pointerdown', onPointerDown);
-    window.addEventListener('resize', onResize);
-
-    // Keep the loop alive lightly so lerp finishes even after quick drags
-    // Stop it when the tab is hidden to save battery.
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } }
-      else if (!rafId) { rafId = requestAnimationFrame(loop); }
-    });
-
-    // Seed the loop once
-    if (!rafId) rafId = requestAnimationFrame(loop);
-  })();
-
-  (function dockMinimizeToTab(){
-    const rail       = document.querySelector('.media-rail');
-    const viewport   = document.getElementById('mediaViewport');
-    const minBtn     = document.getElementById('mediaMinimize'); // your existing button (–)
-    const enlargeBtn = document.getElementById('mediaEnlarge');
-    const tab        = document.getElementById('mediaTab');
-
-    if (!rail || !minBtn || !tab) return;
-
-    const KEY_MIN = 'mediaRailMinimized';
-
-    // If the tab image fails, show fallback text
-    const tabImg = tab.querySelector('img');
-    const tabFallback = tab.querySelector('.media-tab__fallback');
-    if (tabImg){
-      tabImg.addEventListener('error', () => {
-        tabImg.style.display = 'none';
-        if (tabFallback) tabFallback.style.display = 'block';
-      }, { once:true });
-    }
-
-    function showTab(show){
-      tab.classList.toggle('is-visible', !!show);
-    }
-    function setMinimized(min){
-      if (min){
-        // hide rail entirely, show tab
-        rail.classList.add('is-hidden');
-        showTab(true);
-        // Update button UI (if visible elsewhere)
-        minBtn.setAttribute('aria-pressed','true');
-        minBtn.title = 'Restore';
-        minBtn.textContent = '▢';
-      } else {
-        rail.classList.remove('is-hidden');
-        showTab(false);
-        minBtn.setAttribute('aria-pressed','false');
-        minBtn.title = 'Minimize';
-        minBtn.textContent = '–';
-      }
-      try { localStorage.setItem(KEY_MIN, min ? '1' : '0'); } catch {}
-    }
-
-    // Restore previous state
-    const wasMin = localStorage.getItem(KEY_MIN) === '1';
-    setMinimized(wasMin);
-
-    // Button handlers
-    minBtn.addEventListener('click', () => {
-      const willMin = !rail.classList.contains('is-hidden');
-      setMinimized(willMin);
-    });
-
-    tab.addEventListener('click', () => {
-      setMinimized(false); // restore from tab
-    });
-
-    // If user hits enlarge while minimized, restore first
-    if (enlargeBtn){
-      enlargeBtn.addEventListener('click', () => {
-        if (rail.classList.contains('is-hidden')) setMinimized(false);
-      });
-    }
-
-    // Safety: don’t start dragging while minimized (rail is hidden anyway)
-    if (viewport){
-      viewport.addEventListener('pointerdown', (e) => {
-        if (rail.classList.contains('is-hidden')){
-          e.stopPropagation(); e.preventDefault();
+        // Bounds depending on viewport and rail size
+        function bounds() {
+          const vw = window.innerWidth;
+          const vh = window.innerHeight;
+          const rw = rail.offsetWidth;
+          const rh = rail.offsetHeight;
+          return {
+            minX: pad,
+            maxX: vw - rw - pad,
+            minY: pad,
+            maxY: vh - rh - pad,
+          };
         }
-      }, true);
-    }
-  })();
 
-</script>
+        // Smooth animation loop (lerp towards target)
+        function loop() {
+          const LERP = 1.9; // increase for snappier, decrease for more floaty
+          const dx = tgtX - posX;
+          const dy = tgtY - posY;
+          // Snap if tiny to avoid micro-jitter
+          if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) {
+            posX = tgtX;
+            posY = tgtY;
+          } else {
+            posX += dx * LERP;
+            posY += dy * LERP;
+          }
+          applyTransform();
+          rafId = requestAnimationFrame(loop);
+        }
 
-</body>
+        // Persist to localStorage
+        function save() {
+          try {
+            localStorage.setItem(
+              POS_KEY,
+              JSON.stringify({ x: Math.round(tgtX), y: Math.round(tgtY) })
+            );
+          } catch {}
+        }
 
+        // Restore saved position (after baseline so transform is authoritative)
+        function restore() {
+          try {
+            const saved = JSON.parse(localStorage.getItem(POS_KEY) || "null");
+            if (saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)) {
+              const b = bounds();
+              tgtX = clamp(saved.x, b.minX, b.maxX);
+              tgtY = clamp(saved.y, b.minY, b.maxY);
+              posX = tgtX;
+              posY = tgtY;
+              applyTransform();
+            }
+          } catch {}
+        }
+
+        // Start drag anywhere in the viewport (images/videos are pointer-events:none already)
+        let startX = 0,
+          startY = 0,
+          startTX = 0,
+          startTY = 0;
+        function onPointerDown(e) {
+          // avoid starting a drag on interactive UI
+          if (
+            e.target.closest(
+              "button, .media-dots, .media-bottom-nav, a, input, textarea, select"
+            )
+          )
+            return;
+
+          dragging = true;
+          handle.classList.add("is-dragging");
+          startX = e.clientX;
+          startY = e.clientY;
+          startTX = tgtX;
+          startTY = tgtY;
+
+          handle.setPointerCapture?.(e.pointerId);
+          window.addEventListener("pointermove", onPointerMove, {
+            passive: false,
+          });
+          window.addEventListener("pointerup", onPointerUp, { passive: true });
+
+          // Kick the loop if not running
+          if (!rafId) rafId = requestAnimationFrame(loop);
+        }
+
+        function onPointerMove(e) {
+          if (!dragging) return;
+          e.preventDefault(); // no text/image drag
+          const b = bounds();
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+          tgtX = clamp(startTX + dx, b.minX, b.maxX);
+          tgtY = clamp(startTY + dy, b.minY, b.maxY);
+        }
+
+        function onPointerUp() {
+          if (!dragging) return;
+          dragging = false;
+          handle.classList.remove("is-dragging");
+          window.removeEventListener("pointermove", onPointerMove);
+          window.removeEventListener("pointerup", onPointerUp);
+          save();
+        }
+
+        // Re-clamp if window resizes so it never goes off-screen
+        function onResize() {
+          // NEW: don’t change position while minimized to the tab
+          if (rail.classList.contains("is-hidden")) return;
+
+          const r = rail.getBoundingClientRect();
+          const b = bounds();
+          tgtX = clamp(r.left, b.minX, b.maxX);
+          tgtY = clamp(r.top, b.minY, b.maxY);
+          posX = tgtX;
+          posY = tgtY;
+          applyTransform();
+          save();
+
+          if (!rafId) rafId = requestAnimationFrame(loop);
+        }
+
+        // Prevent native drag ghost
+        handle.addEventListener("dragstart", (e) => e.preventDefault());
+
+        // Init flow
+        initBaseline();
+        restore();
+        handle.addEventListener("pointerdown", onPointerDown);
+        window.addEventListener("resize", onResize);
+
+        // Keep the loop alive lightly so lerp finishes even after quick drags
+        // Stop it when the tab is hidden to save battery.
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) {
+            if (rafId) {
+              cancelAnimationFrame(rafId);
+              rafId = null;
+            }
+          } else if (!rafId) {
+            rafId = requestAnimationFrame(loop);
+          }
+        });
+
+        // Seed the loop once
+        if (!rafId) rafId = requestAnimationFrame(loop);
+      })();
+
+      (function dockMinimizeToTab() {
+        const rail = document.querySelector(".media-rail");
+        const viewport = document.getElementById("mediaViewport");
+        const minBtn = document.getElementById("mediaMinimize"); // your existing button (–)
+        const enlargeBtn = document.getElementById("mediaEnlarge");
+        const tab = document.getElementById("mediaTab");
+
+        if (!rail || !minBtn || !tab) return;
+
+        const KEY_MIN = "mediaRailMinimized";
+
+        // If the tab image fails, show fallback text
+        const tabImg = tab.querySelector("img");
+        const tabFallback = tab.querySelector(".media-tab__fallback");
+        if (tabImg) {
+          tabImg.addEventListener(
+            "error",
+            () => {
+              tabImg.style.display = "none";
+              if (tabFallback) tabFallback.style.display = "block";
+            },
+            { once: true }
+          );
+        }
+
+        function showTab(show) {
+          tab.classList.toggle("is-visible", !!show);
+        }
+        function setMinimized(min) {
+          if (min) {
+            // hide rail entirely, show tab
+            rail.classList.add("is-hidden");
+            showTab(true);
+            // Update button UI (if visible elsewhere)
+            minBtn.setAttribute("aria-pressed", "true");
+            minBtn.title = "Restore";
+            minBtn.textContent = "▢";
+          } else {
+            rail.classList.remove("is-hidden");
+            showTab(false);
+            minBtn.setAttribute("aria-pressed", "false");
+            minBtn.title = "Minimize";
+            minBtn.textContent = "–";
+          }
+          try {
+            localStorage.setItem(KEY_MIN, min ? "1" : "0");
+          } catch {}
+        }
+
+        // Restore previous state
+        const wasMin = localStorage.getItem(KEY_MIN) === "1";
+        setMinimized(wasMin);
+
+        // Button handlers
+        minBtn.addEventListener("click", () => {
+          const willMin = !rail.classList.contains("is-hidden");
+          setMinimized(willMin);
+        });
+
+        tab.addEventListener("click", () => {
+          setMinimized(false); // restore from tab
+        });
+
+        // If user hits enlarge while minimized, restore first
+        if (enlargeBtn) {
+          enlargeBtn.addEventListener("click", () => {
+            if (rail.classList.contains("is-hidden")) setMinimized(false);
+          });
+        }
+
+        // Safety: don’t start dragging while minimized (rail is hidden anyway)
+        if (viewport) {
+          viewport.addEventListener(
+            "pointerdown",
+            (e) => {
+              if (rail.classList.contains("is-hidden")) {
+                e.stopPropagation();
+                e.preventDefault();
+              }
+            },
+            true
+          );
+        }
+      })();
+    </script>
+  </body>
 </html>
