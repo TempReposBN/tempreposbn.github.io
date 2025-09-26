@@ -37,8 +37,8 @@
         --fs-title-max: 64px;
 
         --fs-sub-min: 12px;
-        --fs-sub-pref: calc(2 * var(--u));
-        --fs-sub-max: 32px;
+        --fs-sub-pref: calc(1.5 * var(--u));
+        --fs-sub-max: 24px;
 
         --fs-footer-min: 8.5px;
         --fs-footer-pref: calc(1.2 * var(--u));
@@ -70,20 +70,12 @@
       .stage {
         position: relative;
         width: 100%;
-        /* height: 100dvh; */
-        /* overflow: hidden; */
         isolation: isolate;
-        /* min-height: 100dvh; */
-        height: auto;
+        min-height: 100svh; /* full viewport height */
         overflow: visible;
-        /* padding-block: calc(10 * var(--u)) calc(26 * var(--u)); */
+        padding-bottom: calc(5 * var(--u));
+        padding-top: 12vh;
         scroll-snap-align: start;
-        min-height: 100svh;
-        /* new viewport unit, handles mobile UI chrome */
-        height: auto;
-        overflow: visible;
-        padding-block: clamp(10vh, 10 * var(--u), 14vh)
-          clamp(18vh, 26 * var(--u), 24vh);
       }
 
       .stage::before,
@@ -138,10 +130,6 @@
           rgba(0, 0, 0, 0.65) 40%,
           rgba(0, 0, 0, 0) 100%
         );
-      }
-
-      #stage .hero {
-        bottom: -50vh;
       }
 
       #stage-2 {
@@ -430,31 +418,36 @@
       }
 
       .hero {
-        position: relative;
-        bottom: -50vh;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100%;
         display: flex;
-        justify-content: center;
         z-index: 5;
-        margin-top: auto;
-        padding-bottom: clamp(8vh, 12vh, 16vh);
+        min-height: 10%;
+        padding-bottom: calc(5 * var(--u));
+        position: relative;
+        max-width: none;
+        place-content: center;
+        justify-content: bottom;
+      }
+
+      .hero--with-photo {
+        bottom: calc(3 * var(--u)); /* always 20px above the screen’s bottom */
+        /* padding-top: calc(50 * var(--u)); */
+        align-items: bottom;
+        justify-content: bottom;
       }
 
       .hero--with-photo .hero-wrap {
         display: grid;
-        grid-template-columns: minmax(220px, 34vw) minmax(280px, 640px);
-        align-items: center;
-        width: min(1000px, 96vw);
+        grid-template-columns: minmax(220px, 60%) minmax(220px, 60%);
+        width: 100;
+        column-gap: calc(5 * var(--u));
         justify-content: center;
-        margin-top: -25px;
-        column-gap: clamp(12px, 2vw, 24px);
+        margin-top: 45vh;
+        margin-left: auto;
+        margin-right: auto;
       }
 
       .hero--with-photo .profile {
         /* glassy photo frame */
-        margin: 0;
         position: relative;
         border-radius: calc(2.2 * var(--u));
         overflow: hidden;
@@ -468,11 +461,11 @@
           0 calc(2.4 * var(--u)) calc(7 * var(--u)) rgba(0, 0, 0, 0.55);
         backdrop-filter: blur(calc(1.4 * var(--u)));
         -webkit-backdrop-filter: blur(calc(1.4 * var(--u)));
-        aspect-ratio: 7 / 5;
+        aspect-ratio: 10 / 5;
         width: 100%; /* scale with column space */
-        max-width: 280px; /* reasonable cap */
-        min-width: 380px; /* don’t shrink too small */
-        justify-self: end; /* push photo right inside its column */
+        max-width: 780px; /* reasonable cap */
+        min-width: 220px; /* don’t shrink too small */
+        justify-self: center; /* push photo right inside its column */
       }
 
       .hero--with-photo .profile-img {
@@ -504,11 +497,12 @@
 
       /* Profile hover */
       .hero--with-photo .profile {
+        z-index: 6;
         transition: transform 0.35s ease, box-shadow 0.35s ease;
       }
 
       .hero--with-photo .profile:hover {
-        transform: translateY(-20px) scale(1.3);
+        transform: translateY(-20px) scale(1.2);
         box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55),
           0 0 16px rgba(125, 175, 255, 0.35);
       }
@@ -519,7 +513,7 @@
       }
 
       .hero--with-photo .profile:hover .profile-img {
-        transform: scale(1.08);
+        transform: scale(1.3);
       }
 
       @media (max-width: 860px) {
@@ -587,15 +581,16 @@
 
         position: relative;
         max-width: min(1200px, 96vw);
+        min-width: min(200px, 96vw);
         background: linear-gradient(
           180deg,
           var(--card-bg-top),
           var(--card-bg-bot)
         );
         -webkit-backdrop-filter: blur(14px);
-        border: 2px solid rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.18);
         padding: clamp(calc(1.8 * var(--u)), 3vw, calc(3.6 * var(--u)))
-          clamp(calc(1.8 * var(--u)), 4vw, calc(4.4 * var(--u)));
+          clamp(calc(1.8 * var(--u)), 2vw, calc(2.4 * var(--u)));
         border-radius: var(--card-br);
         backdrop-filter: blur(calc(1.4 * var(--u)));
         border-width: 1px;
@@ -655,7 +650,7 @@
 
       /* Subtitle: narrower measure + higher contrast for readability */
       .subtitle {
-        margin: 0.85rem auto 0;
+        margin: 1.5rem auto 0;
         max-width: 75ch;
         color: #e7edff;
         /* brighter than muted */
@@ -754,7 +749,7 @@
       /* ===== Nodes ===== */
       .node {
         position: absolute;
-        z-index: 2;
+        z-index: 5;
         width: var(--node-size);
         height: var(--node-size);
         border-radius: 50%;
@@ -1477,7 +1472,7 @@
       </nav>
 
       <!-- Hero -->
-      <section class="hero hero--with-photo hero--pro">
+      <section class="hero hero--with-photo">
         <div class="hero-wrap">
           <div class="card card--pro" role="banner">
             <h1 class="title title--pro">
@@ -1487,7 +1482,7 @@
               <span class="pill">Biomedical Engineering</span> Bachelor (NUS).
               Research: Primates Spatial Navigation, EEG/MEG/LFP, and IMU
               trajectory estimation. Currently
-              <span class="pill">co-authoring my first publication</span>
+              <span class="pill">co-authoring</span> my first publication.
             </p>
           </div>
           <figure class="profile" aria-label="Portrait">
