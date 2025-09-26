@@ -148,7 +148,17 @@
         /* less top/bottom space */
         padding-block: clamp(4vh, 6 * var(--u), 8vh)
           clamp(6vh, 10 * var(--u), 10vh);
-        min-height: unset; /* don't force tall section */
+        min-height: 100svh;
+        overflow: hidden;
+      }
+
+      /* Ensure the bg video always covers the section box */
+      #stage-2 .bg-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
 
       #stage-2 .stage-edge {
@@ -1477,7 +1487,7 @@
               <span class="pill">Biomedical Engineering</span> Bachelor (NUS).
               Research: Primates Spatial Navigation, EEG/MEG/LFP, and IMU
               trajectory estimation. Currently
-              <span class="pill">co-authoring my first publication</span>.
+              <span class="pill">co-authoring my first publication</span>
             </p>
           </div>
           <figure class="profile" aria-label="Portrait">
@@ -1666,7 +1676,6 @@
 
     <!-- ===== Stage 2 (new) ===== -->
     <div class="stage vignette" id="stage-2" data-theme="blue">
-
       <video
         class="bg-video"
         src="main2_bg.mp4"
