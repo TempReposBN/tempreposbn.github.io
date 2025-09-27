@@ -195,10 +195,33 @@
 
       #stage-2 .hero .card {
         padding: clamp(8px, 1vmin, 10px) clamp(12px, 2vmin, 16px);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer; /* feel clickable */
       }
       /* Make the underline sit closer to the text */
       #stage-2 .hero .title::after {
         margin-top: 0.25rem; /* was 0.6rem */
+      }
+
+      #stage-2 .hero .card:hover {
+        transform: translateY(-6px) scale(1.05);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55),
+          0 0 14px rgba(77, 163, 255, 0.35); /* subtle blue glow */
+      }
+
+      #researchBoardTitle a {
+        text-decoration: none;
+        background: inherit; /* keep gradient */
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent; /* use gradient instead of normal color */
+        display: inline-block;
+        transition: text-shadow 0.3s ease, transform 0.25s ease;
+      }
+
+      #researchBoardTitle a:hover {
+        text-shadow: 0 0 14px rgba(77, 163, 255, 0.6);
+        transform: scale(1.05);
       }
 
       #stage-3 .hero {
@@ -1695,7 +1718,7 @@
             <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
             <stop offset="100%" stop-color="#cde2ff" stop-opacity="0.9" />
           </linearGradient>
-          <filter id="wireGlow2" x="-50%" y="-50%" width="200%" height="200%">
+          <filter id="wireGlow2" x="-50%" y="-50%" width="200%" height="20000%">
             <feGaussianBlur
               in="SourceGraphic"
               stdDeviation="2.2"
@@ -1717,7 +1740,13 @@
             role="banner"
             style="margin-bottom: clamp(10px, 2vmin, 18px)"
           >
-            <h1 id="researchBoardTitle" class="title">Research Projects</h1>
+            <a
+              href="research.html"
+              style="display: block; text-decoration: none; color: inherit; font-size: 1500"
+            >
+              <h1 id="researchBoardTitle" class="title">Research Projects</h1>
+            </a>
+            </h1>
           </div>
         </section>
 
