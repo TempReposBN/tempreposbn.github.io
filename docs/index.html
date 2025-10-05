@@ -209,6 +209,11 @@
           0 0 14px rgba(77, 163, 255, 0.35); /* subtle blue glow */
       }
 
+      #researchBoardTitle {
+        font-size: clamp(32px, 3.6vmin, 42px);
+        line-height: 1.05;
+      }
+
       #researchBoardTitle a {
         text-decoration: none;
         background: inherit; /* keep gradient */
@@ -311,10 +316,93 @@
         object-fit: cover;
       }
 
+      .tile-slider {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: calc(1.2 * var(--u));
+        overflow: hidden;
+        isolation: isolate;
+      }
+
+      /* Apply the ratio only to actual media containers */
+      .tile--pic[data-slides] .tile-slider {
+        aspect-ratio: 4 / 3;
+        width: 100%;
+        height: auto;
+        border-radius: inherit;
+        overflow: hidden; /* keep content from pushing height */
+      }
+
+      .tile-track {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.6s ease;
+        will-change: transform;
+      }
+
+      .tile-slide {
+        min-width: 100%;
+        height: 100%;
+        display: grid;
+        place-items: center;
+      }
+
+      .tile-slide img,
+      .tile-slide video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        object-position: center;
+        border-radius: inherit;
+      }
+
+      .tile-dots {
+        position: absolute;
+        left: 50%;
+        bottom: calc(0.8 * var(--u));
+        transform: translateX(-50%);
+        display: flex;
+        gap: calc(0.4 * var(--u));
+        padding: calc(0.25 * var(--u)) calc(0.6 * var(--u));
+        border-radius: 999px;
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.55),
+          rgba(8, 10, 18, 0.38)
+        );
+        backdrop-filter: blur(calc(1.8 * var(--u)));
+        -webkit-backdrop-filter: blur(calc(1.8 * var(--u)));
+        z-index: 2;
+      }
+
+      .tile-dot {
+        width: calc(0.5 * var(--u));
+        height: calc(0.9 * var(--u));
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        opacity: 0.85;
+        box-shadow: 0 0 0 0 rgba(77, 163, 255, 0);
+        transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .tile-dot[aria-current="true"] {
+        background: linear-gradient(180deg, #fff, #e8f1ff);
+        border-color: rgba(255, 255, 255, 0.9);
+        opacity: 1;
+        transform: scale(1.1);
+        box-shadow: 0 0 0 2px rgba(77, 163, 255, 0.25);
+      }
+
       /* text tile */
       .tile--text {
         padding: clamp(14px, 2.2vmin, 18px);
         color: #e7edff;
+        font-size: clamp(12px, 1.6vmin, 18px);
       }
       .tile__eyebrow {
         font-weight: 800;
@@ -357,7 +445,7 @@
           rgba(77, 163, 255, 0.1)
         );
         font-weight: 700;
-        font-size: 12px;
+        font-size: clamp(10px, 1.35vmin, 12px);
         color: #fff;
         white-space: nowrap;
       }
@@ -1477,11 +1565,14 @@
         position: relative;
         border-radius: calc(2.2 * var(--u));
         overflow: hidden;
-        background: linear-gradient(180deg, rgba(8,10,18,0.82), rgba(8,10,18,0.72));
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.82),
+          rgba(8, 10, 18, 0.72)
+        );
         border: 2px solid rgba(255, 255, 255, 0.18);
-        box-shadow:
-          inset 0 1px 0 rgba(255,255,255,0.08),
-          0 calc(2.4 * var(--u)) calc(7 * var(--u)) rgba(0,0,0,0.55);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          0 calc(2.4 * var(--u)) calc(7 * var(--u)) rgba(0, 0, 0, 0.55);
         aspect-ratio: 10 / 5;
       }
 
@@ -1491,7 +1582,7 @@
         inset: -1px;
         border-radius: inherit;
         pointer-events: none;
-        box-shadow: 0 0 calc(3 * var(--u)) rgba(125,175,255,0.18);
+        box-shadow: 0 0 calc(3 * var(--u)) rgba(125, 175, 255, 0.18);
       }
 
       .card__media-img {
@@ -1548,7 +1639,11 @@
         <div class="hero-wrap">
           <div class="card card--pro card--with-media" role="banner">
             <figure class="card__media" aria-label="Portrait">
-              <img src="self.jpg" alt="Eric Liu portrait" class="card__media-img" />
+              <img
+                src="self.jpg"
+                alt="Eric Liu portrait"
+                class="card__media-img"
+              />
             </figure>
 
             <div class="card__body">
@@ -1556,10 +1651,11 @@
                 <span class="hi">Hi</span> I am Eric!
               </h1>
               <p class="subtitle subtitle--pro">
-                <span class="pill">Biomedical Engineering</span> Bachelor (NUS).
-                Research: Primates Spatial Navigation, EEG/MEG/LFP, and IMU
-                trajectory estimation. Currently
-                <span class="pill">co-authoring</span> my first publication.
+                <span class="pill">Biomedical Engineering</span> Bachelor
+                <span class="pill">NUS</span>. Research: Primates Spatial
+                Navigation, EEG/MEG/LFP, and IMU trajectory estimation.
+                Currently <span class="pill">co-authoring</span> my first
+                publication.
               </p>
             </div>
           </div>
@@ -1794,7 +1890,12 @@
           >
             <a
               href="research.html"
-              style="display: block; text-decoration: none; color: inherit; font-size: 1500"
+              style="
+                display: block;
+                text-decoration: none;
+                color: inherit;
+                font-size: 1500;
+              "
             >
               <h1 id="researchBoardTitle" class="title">Research Projects</h1>
             </a>
@@ -1809,37 +1910,42 @@
             role="group"
             aria-label="Project 1"
           >
-            <article class="tile tile--pic" role="listitem">
-              <div class="tile__placeholder">
-                VR maze setup for primate navigation
-              </div>
-            </article>
             <article class="tile tile--text">
               <div class="tile__eyebrow">Project 1</div>
               <h3 class="tile__title">
                 Hippocampal Theta During Goal-Directed Navigation
               </h3>
               <p>
-                We analyze theta-band dynamics while subjects traverse virtual
-                mazes under changing reward contingencies. Emphasis on
-                phase-precession and path-planning correlates.
+                We analyze hippocampal theta-band dynamics in macaque monkeys
+                performing a goal-directed virtual navigation task. Focusing on
+                the pre-navigation (path-planning) phase, we show how theta
+                power and peak amplitude encode goal cues and spatial context,
+                revealing the hippocampus's dual role in recognizing and binding
+                “what” and “where” information for memory-guided navigation.
               </p>
               <div class="badges">
-                <span class="badge">Theta (4 - 8 Hz)</span>
+                <span class="badge">Theta (3 - 8 Hz)</span>
                 <span class="badge">Signal Processing</span>
-                <span class="badge">Spatial Recall</span>
-                <span class="badge">Primate VR</span>
+                <span class="badge">Spatial Memory</span>
+                <span class="badge">LFP Analysis</span>
+                <span class="badge">Virtual Navigation</span>
               </div>
               <div class="tile__meta">EEG/LFP • Python • Unity Engine</div>
             </article>
 
-            <article class="tile tile--pic">
-              <img
-                src="Hippo-s.PNG"
-                alt="Theta power maps across maze segments"
-                loading="lazy"
-              />
-            </article>
+            <article
+              class="tile tile--pic"
+              data-slides='[
+                "hippo_proj/channel_selectivity.PNG",
+                "hippo_proj/data_proc.PNG",
+                "hippo_proj/maze_layout.PNG",
+                "hippo_proj/implant.PNG",
+                "hippo_proj/theta_power.PNG",
+                "hippo_proj/trial_flow.PNG",
+                "hippo_proj/trial_setup.PNG"
+              ]'
+              role="listitem"
+            ></article>
           </div>
 
           <!-- Column 2 -->
@@ -1849,9 +1955,6 @@
             role="group"
             aria-label="Project 2"
           >
-            <article class="tile tile--pic">
-              <div class="tile__placeholder">Foot-mounted IMU hardware</div>
-            </article>
             <article class="tile tile--text">
               <div class="tile__eyebrow">Project 2</div>
               <h3 class="tile__title">
@@ -1889,11 +1992,6 @@
             role="group"
             aria-label="Project 3"
           >
-            <article class="tile tile--pic">
-              <div class="tile__placeholder">
-                EEG Response from Subjects for Touch
-              </div>
-            </article>
             <article class="tile tile--text">
               <div class="tile__eyebrow">Project 3</div>
               <h3 class="tile__title">Active and Passive Touch with EEG</h3>
@@ -2632,6 +2730,175 @@
             true
           );
         }
+      })();
+
+      (function initStage2TileSlideshows() {
+        const TILES = document.querySelectorAll(
+          "#stage-2 .tile--pic[data-slides]"
+        );
+        if (!TILES.length) return;
+
+        const AUTOPLAY_MS = 4000;
+
+        TILES.forEach((tile) => {
+          let slides;
+          try {
+            slides = JSON.parse(tile.getAttribute("data-slides") || "[]");
+          } catch {
+            slides = [];
+          }
+          slides = Array.isArray(slides) ? slides : [];
+
+          if (!slides.length) return;
+
+          // Build structure
+          tile.innerHTML = "";
+          const slider = document.createElement("div");
+          slider.className = "tile-slider";
+
+          const track = document.createElement("div");
+          track.className = "tile-track";
+          slider.appendChild(track);
+
+          slides.forEach((src, i) => {
+            const slide = document.createElement("div");
+            slide.className = "tile-slide";
+            if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(src)) {
+              const v = document.createElement("video");
+              v.src = src;
+              v.muted = true;
+              v.loop = true;
+              v.playsInline = true;
+              v.autoplay = true;
+              v.setAttribute("aria-label", `Slide ${i + 1}`);
+              v.addEventListener(
+                "canplay",
+                () => {
+                  try {
+                    v.play();
+                  } catch {}
+                },
+                { once: true }
+              );
+              slide.appendChild(v);
+            } else {
+              const img = new Image();
+              img.src = src;
+              img.alt = `Slide ${i + 1}`;
+              slide.appendChild(img);
+            }
+            track.appendChild(slide);
+          });
+
+          // Dots
+          const dots = document.createElement("div");
+          dots.className = "tile-dots";
+          slides.forEach((_, i) => {
+            const dot = document.createElement("button");
+            dot.type = "button";
+            dot.className = "tile-dot";
+            dot.setAttribute("aria-label", `Go to slide ${i + 1}`);
+            dot.addEventListener("click", () => goTo(i, true));
+            dots.appendChild(dot);
+          });
+
+          // Optional prev/next wide zones (click left/right half)
+          const nav = document.createElement("div");
+          nav.className = "tile-nav";
+          const prev = document.createElement("div");
+          prev.className = "tile-nav__btn tile-nav__prev";
+          const next = document.createElement("div");
+          next.className = "tile-nav__btn tile-nav__next";
+          prev.addEventListener("click", () => goTo(idx - 1, true));
+          next.addEventListener("click", () => goTo(idx + 1, true));
+          nav.appendChild(prev);
+          nav.appendChild(next);
+
+          // Assemble
+          tile.appendChild(slider);
+          tile.appendChild(dots);
+          tile.appendChild(nav);
+
+          // Logic
+          let idx = 0;
+          let timer = null;
+
+          function updateUI() {
+            track.style.transform = `translateX(${-idx * 100}%)`;
+            [...dots.children].forEach((d, i) =>
+              d.setAttribute("aria-current", i === idx ? "true" : "false")
+            );
+            // Play/pause videos appropriately
+            track.querySelectorAll("video").forEach((v, i) => {
+              if (i === idx) {
+                try {
+                  v.play();
+                } catch {}
+              } else {
+                v.pause();
+                v.currentTime = 0;
+              }
+            });
+          }
+
+          function goTo(i, user = false) {
+            idx = (i + slides.length) % slides.length;
+            updateUI();
+            if (user) restartAutoplay();
+          }
+
+          function startAutoplay() {
+            stopAutoplay();
+            timer = setInterval(() => goTo(idx + 1, false), AUTOPLAY_MS);
+          }
+          function stopAutoplay() {
+            if (timer) {
+              clearInterval(timer);
+              timer = null;
+            }
+          }
+          function restartAutoplay() {
+            startAutoplay();
+          }
+
+          // Hover/focus pause
+          slider.addEventListener("mouseenter", stopAutoplay);
+          slider.addEventListener("mouseleave", startAutoplay);
+          slider.addEventListener("focusin", stopAutoplay);
+          slider.addEventListener("focusout", startAutoplay);
+
+          // Touch swipe
+          let touchX = null;
+          slider.addEventListener(
+            "touchstart",
+            (e) => {
+              touchX = e.touches[0].clientX;
+            },
+            { passive: true }
+          );
+          slider.addEventListener(
+            "touchend",
+            (e) => {
+              if (touchX == null) return;
+              const dx = e.changedTouches[0].clientX - touchX;
+              const TH = Math.max(24, tile.clientWidth * 0.07);
+              if (dx > TH) goTo(idx - 1, true);
+              if (dx < -TH) goTo(idx + 1, true);
+              touchX = null;
+            },
+            { passive: true }
+          );
+
+          // Init
+          updateUI();
+          startAutoplay();
+
+          // Reduce work in background tabs
+          document.addEventListener("visibilitychange", () => {
+            if (document.hidden) stopAutoplay();
+            else startAutoplay();
+          });
+        });
       })();
     </script>
   </body>
