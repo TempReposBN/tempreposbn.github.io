@@ -232,14 +232,6 @@
         transform: scale(1.05);
       }
 
-      #stage-3 .hero {
-        bottom: auto;
-        left: auto;
-        transform: none;
-        margin: 0 auto;
-        padding-bottom: 0;
-      }
-
       #stage-2 .stage2-wrap {
         min-height: 100%;
         display: flex;
@@ -582,7 +574,6 @@
         box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55),
           0 0 16px rgba(125, 175, 255, 0.35);
       }
-
 
       @media (max-width: 860px) {
         .hero--with-photo .hero-wrap {
@@ -1566,7 +1557,237 @@
           text-align: center;
         }
       }
-      
+
+      #stage-3 {
+        padding-block: clamp(6vh, 8 * var(--u), 10vh)
+          clamp(8vh, 10 * var(--u), 12vh);
+        min-height: 100svh;
+        overflow: hidden;
+        background: radial-gradient(
+            1200px 600px at 80% 10%,
+            rgba(77, 163, 255, 0.08),
+            transparent 60%
+          ),
+          radial-gradient(
+            800px 400px at 10% 80%,
+            rgba(167, 186, 255, 0.08),
+            transparent 60%
+          );
+      }
+
+      /* filter chips */
+      .about-filters {
+        margin: 1.1rem auto 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+      }
+      .chip {
+        padding: 0.45em 0.9em;
+        border-radius: 999px;
+        border: 1px solid rgba(125, 175, 255, 0.35);
+        background: linear-gradient(
+          180deg,
+          rgba(77, 163, 255, 0.18),
+          rgba(77, 163, 255, 0.1)
+        );
+        color: #fff;
+        font-weight: 700;
+        font-size: clamp(11px, 1.5vmin, 13px);
+        cursor: pointer;
+        transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease,
+          background 0.2s ease;
+      }
+      .chip:hover {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+      }
+      .chip.is-active {
+        background: linear-gradient(
+          180deg,
+          rgba(123, 178, 255, 0.28),
+          rgba(77, 163, 255, 0.16)
+        );
+        box-shadow: 0 0 0 2px rgba(77, 163, 255, 0.25) inset;
+      }
+
+      /* grid */
+      .about-grid {
+        width: min(1200px, 92vw);
+        margin: clamp(12px, 3vmin, 24px) auto 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: clamp(14px, 2.4vmin, 24px);
+        align-items: start;
+        z-index: 5;
+      }
+      .about-card {
+        position: relative;
+        border-radius: calc(1.6 * var(--u));
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.82),
+          rgba(8, 10, 18, 0.72)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        overflow: hidden;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(0, 0, 0, 0.45);
+        transition: transform 0.25s ease, box-shadow 0.25s ease,
+          border-color 0.25s ease;
+        cursor: zoom-in;
+      }
+      .about-card:hover {
+        transform: translateY(-6px) scale(1.03);
+        border-color: rgba(125, 175, 255, 0.4);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55),
+          0 0 12px rgba(77, 163, 255, 0.25);
+      }
+      .about-card__media {
+        aspect-ratio: 4 / 3;
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+        filter: saturate(1.04);
+      }
+
+      .about-card__ph {
+        aspect-ratio: 4 / 3;
+        width: 100%;
+        border-radius: calc(1.2 * var(--u));
+        background: radial-gradient(
+            120% 100% at 80% 10%,
+            rgba(77, 163, 255, 0.12),
+            transparent 60%
+          ),
+          radial-gradient(
+            90% 70% at 10% 80%,
+            rgba(167, 186, 255, 0.1),
+            transparent 60%
+          ),
+          linear-gradient(180deg, rgba(12, 16, 28, 0.7), rgba(12, 16, 28, 0.55));
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      .about-card__body {
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        padding: 10px 12px;
+        border-radius: calc(1 * var(--u));
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.65),
+          rgba(8, 10, 18, 0.35)
+        );
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+      }
+      .about-card__title {
+        margin: 0 0 4px;
+        font-weight: 800;
+        font-size: clamp(14px, 2vmin, 18px);
+        background: linear-gradient(180deg, #fff, #dfe9ff 70%, #a7baff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .about-card__meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: clamp(10px, 1.35vmin, 12px);
+        color: #cfe0ff;
+      }
+      .about-tag {
+        padding: 0.15em 0.55em;
+        border-radius: 999px;
+        border: 1px solid rgba(125, 175, 255, 0.35);
+        background: linear-gradient(
+          180deg,
+          rgba(77, 163, 255, 0.18),
+          rgba(77, 163, 255, 0.1)
+        );
+        white-space: nowrap;
+        font-weight: 700;
+      }
+
+      /* lightbox */
+      .about-lightbox {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        background: rgba(0, 0, 0, 0.65);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: clamp(8px, 2vmin, 18px);
+      }
+      .about-lightbox.is-open {
+        display: flex;
+      }
+      .about-lightbox__frame {
+        position: relative;
+        margin: 0;
+        max-width: min(1200px, 92vw);
+        max-height: 86vh;
+        display: grid;
+        grid-template-rows: 1fr auto;
+        gap: 10px;
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.82),
+          rgba(8, 10, 18, 0.72)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: calc(1.6 * var(--u));
+        padding: clamp(8px, 1.4vmin, 14px);
+        box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+      }
+      .about-lightbox__frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: calc(1.2 * var(--u));
+      }
+      .about-lightbox__frame figcaption {
+        color: #e7edff;
+        font-size: clamp(12px, 1.6vmin, 16px);
+      }
+      .about-lightbox__close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: rgba(8, 10, 18, 0.65);
+        color: #fff;
+        font-weight: 800;
+        padding: 6px 10px;
+        cursor: pointer;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      }
+      .about-lightbox__close:hover {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+      }
+
+      #stage-3 .hero {
+        bottom: auto;
+        left: auto;
+        transform: none;
+        margin: 0 auto;
+        padding-bottom: 0;
+        display: flex;
+        justify-content: center;
+      }
+
+      #stage-3 .hero .card {
+        margin-inline: auto; /* safety for older browsers */
+      }
     </style>
   </head>
 
@@ -1981,7 +2202,7 @@
     <div class="stage vignette" id="stage-3" data-theme="purple">
       <video
         class="bg-video"
-        src="stage3_bg.mp4"
+        src="main3_bg.mp4"
         autoplay
         muted
         loop
@@ -1989,56 +2210,106 @@
         preload="auto"
       ></video>
 
-      <svg
-        class="wires"
-        viewBox="0 0 600 400"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <defs>
-          <linearGradient id="wireGradient3" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
-            <stop offset="100%" stop-color="#cde2ff" stop-opacity="0.9" />
-          </linearGradient>
-          <filter id="wireGlow3" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur
-              in="SourceGraphic"
-              stdDeviation="2.2"
-              result="blur"
-            />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-      </svg>
+      <div class="stage-edge stage-edge--top"></div>
 
-      <div
-        class="node"
-        data-link="#aboutme"
-        data-label="About Me"
-        data-ax="30"
-        data-ay="60"
-      ></div>
-      <div
-        class="node"
-        data-link="#contact"
-        data-label="Contact"
-        data-ax="72"
-        data-ay="34"
-      ></div>
-
-      <section class="hero">
-        <div class="card reveal" role="banner">
-          <h1 class="title">Engineering in Practice</h1>
+      <section class="hero" id="aboutme" aria-labelledby="aboutTitle">
+        <div class="card" role="banner">
+          <h1 class="title" id="aboutTitle">About Me</h1>
           <p class="subtitle">
-            From calibration pipelines to Bland–Altman analytics and RTS-Kalman
-            gait estimation, I blend engineering rigor with translational
-            impact.
+            A mix of research, making, sport, and community projects. Click any
+            tile to peek.
           </p>
+
+          <!-- Filter chips -->
+          <div
+            class="about-filters"
+            role="tablist"
+            aria-label="Filter categories"
+          >
+            <button
+              class="chip is-active"
+              role="tab"
+              aria-selected="true"
+              data-filter="all"
+            >
+              All
+            </button>
+            <button
+              class="chip"
+              role="tab"
+              aria-selected="false"
+              data-filter="research"
+            >
+              Research
+            </button>
+            <button
+              class="chip"
+              role="tab"
+              aria-selected="false"
+              data-filter="builds"
+            >
+              Builds
+            </button>
+            <button
+              class="chip"
+              role="tab"
+              aria-selected="false"
+              data-filter="sport"
+            >
+              Sport
+            </button>
+            <button
+              class="chip"
+              role="tab"
+              aria-selected="false"
+              data-filter="community"
+            >
+              Community
+            </button>
+            <button
+              class="chip"
+              role="tab"
+              aria-selected="false"
+              data-filter="travel"
+            >
+              Travel
+            </button>
+            <button
+              class="chip"
+              role="tab"
+              aria-selected="false"
+              data-filter="life"
+            >
+              Life
+            </button>
+          </div>
         </div>
       </section>
+
+      <!-- Grid -->
+      <div class="about-grid" id="aboutGrid" role="list"></div>
+
+      <!-- Lightbox -->
+      <div class="about-lightbox" id="aboutLightbox" aria-hidden="true">
+        <button
+          class="about-lightbox__close"
+          id="aboutLightboxClose"
+          aria-label="Close"
+        >
+          ✕
+        </button>
+        <figure
+          class="about-lightbox__frame"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image viewer"
+        >
+          <img id="aboutLightboxImg" alt="" />
+          <figcaption id="aboutLightboxCap"></figcaption>
+        </figure>
+      </div>
+
+      <div class="stage-edge stage-edge--bottom"></div>
     </div>
 
     <script>
@@ -2857,6 +3128,223 @@
             else startAutoplay();
           });
         });
+      })();
+
+      (function initStage3About() {
+        const grid = document.getElementById("aboutGrid");
+        const lb = document.getElementById("aboutLightbox");
+        const lbImg = document.getElementById("aboutLightboxImg");
+        const lbVideo = document.createElement("video");
+        const lbCap = document.getElementById("aboutLightboxCap");
+        const lbClose = document.getElementById("aboutLightboxClose");
+        if (!grid || !lb || !lbImg || !lbCap || !lbClose || !lbVideo) return;
+
+        // ---- EDIT ME: add/modify your entries here ----
+        // tag options used by filters: research | builds | sport | community | travel | life
+        const aboutItems = [
+          {
+            title: "Journey in NUS",
+            media: [
+              { type: "img",   src: "about/1.JPG" },
+              { type: "img",   src: "about/2.jpg" },
+              { type: "img",   src: "about/3.jpg" },
+              { type: "img",   src: "about/4.jpg" },
+              { type: "img",   src: "about/5.jpg" },
+              { type: "img",   src: "about/6.jpg" },
+              { type: "img",   src: "about/7.jpg" },
+              { type: "img",   src: "about/8.jpg" },
+              { type: "video",   src: "about/9.mp4" },
+            ],
+            img: "about/4.jpg",
+            cap: "At NUS (2021-2025) I grew from child with a dream to a researcher. Graduated with Highest Distinction in Biomedical Engineering, winning the Medical Grand Challenge, leading the Archery Club, and contributing brain-signals and gait projects in N.1 Lab and iHealthtech",
+            tags: ["university", "school", "self"],
+          },
+          {
+            title: "Younger Self",
+            img: "about/meg_setup.jpg",
+            cap: "Adapted the active/passive touch pipeline from EEG to MEG; revamped processing.",
+            tags: ["self"],
+            year: 2024,
+          },
+          {
+            title: "My Dream",
+            img: "about/imu_path.jpg",
+            cap: "Long-walk drift reduction with RTS smoothing, soft ZUPT, and event detection.",
+            tags: ["self"],
+            year: 2025,
+          },
+          {
+            title: "Nixie lock",
+            img: "about/theta_plot.jpg",
+            cap: "Goal-directed navigation: pre-navigation theta encodes spatial context.",
+            tags: ["research"],
+            year: 2025,
+          },
+          {
+            title: "Theatre with Elders",
+            img: "about/theatre_elderly.jpg",
+            cap: "Intergenerational creative workshops to spark shared memories and stories.",
+            tags: ["community", "life"],
+            year: 2025,
+          },
+          {
+            title: "3D Prints & Fixtures",
+            img: "about/3d_print.jpg",
+            cap: "Rapid prototyping mounts and fixtures; tuned tolerances for lab rigs.",
+            tags: ["builds"],
+            year: 2023,
+          },
+          {
+            title: "Hiking & Travel",
+            img: "about/hike.jpg",
+            cap: "Refuel the brain outside the lab—trails, sunrises, and far too many photos.",
+            tags: ["travel", "life"],
+            year: 2023,
+          },
+          {
+            title: "Photography",
+            img: "about/photo.jpg",
+            cap: "Low-light, portraits, and little moments that feel bigger later.",
+            tags: ["life"],
+            year: 2022,
+          },
+          {
+            title: "Co-authoring First Paper",
+            img: "about/writing.jpg",
+            cap: "Drafting results, figures, and methods—turning experiments into narrative.",
+            tags: ["research", "life"],
+            year: 2025,
+          },
+          {
+            title: "Gym & Conditioning",
+            img: "about/gym.jpg",
+            cap: "Strength & mobility for archery and lab stamina.",
+            tags: ["sport", "life"],
+            year: 2024,
+          },
+        ];
+        // -----------------------------------------------
+
+        // Build a card element
+        function makeCard(item) {
+          const li = document.createElement("article");
+          li.className = "about-card";
+          li.setAttribute("role", "listitem");
+          li.dataset.tags = item.tags.join(" ");
+
+          const img = new Image();
+          img.loading = "lazy";
+          img.decoding = "async";
+          img.src = item.img;
+          img.alt = item.title;
+          img.className = "about-card__media";
+
+          // If the image fails to load, swap in a styled placeholder pane
+          img.onerror = () => {
+            img.remove(); // avoids the browser painting the alt text visually
+            const ph = document.createElement("div");
+            ph.className = "about-card__ph";
+            // keep accessible name via aria-label (the title still exists below too)
+            ph.setAttribute("aria-label", item.title);
+            li.insertBefore(ph, body);
+          };
+
+          const body = document.createElement("div");
+          body.className = "about-card__body";
+
+          const h = document.createElement("h3");
+          h.className = "about-card__title";
+          h.textContent = item.title;
+
+          const meta = document.createElement("div");
+          meta.className = "about-card__meta";
+
+          // year (if provided)
+          if (item.year) {
+            const y = document.createElement("span");
+            y.className = "about-tag";
+            y.textContent = item.year;
+            meta.appendChild(y);
+          }
+
+          // tags
+          item.tags.forEach((t) => {
+            const span = document.createElement("span");
+            span.className = "about-tag";
+            span.textContent = t;
+            meta.appendChild(span);
+          });
+
+          body.appendChild(h);
+          body.appendChild(meta);
+
+          li.appendChild(img);
+          li.appendChild(body);
+
+          // lightbox open
+          li.addEventListener("click", () =>
+            openLightbox(item.img, item.title, item.cap || "")
+          );
+          return li;
+        }
+
+        function render(items) {
+          grid.innerHTML = "";
+          items.forEach((it) => grid.appendChild(makeCard(it)));
+        }
+
+        // Lightbox controls
+        function openLightbox(src, alt, cap) {
+          lbImg.src = src;
+          lbImg.alt = alt || "";
+          lbCap.textContent = cap || "";
+          lb.classList.add("is-open");
+          lb.setAttribute("aria-hidden", "false");
+          document.body.style.overflow = "hidden";
+          lbClose.focus();
+        }
+        function closeLightbox() {
+          lb.classList.remove("is-open");
+          lb.setAttribute("aria-hidden", "true");
+          document.body.style.overflow = "";
+          lbImg.src = "";
+          lbImg.alt = "";
+          lbCap.textContent = "";
+        }
+        lbClose.addEventListener("click", closeLightbox);
+        lb.addEventListener("click", (e) => {
+          if (e.target === lb) closeLightbox();
+        });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && lb.classList.contains("is-open"))
+            closeLightbox();
+        });
+
+        // Filters
+        const chips = Array.from(document.querySelectorAll("#stage-3 .chip"));
+        let current = "all";
+        function applyFilter(cat) {
+          current = cat;
+          chips.forEach((c) => {
+            const active = c.dataset.filter === cat;
+            c.classList.toggle("is-active", active);
+            c.setAttribute("aria-selected", active ? "true" : "false");
+          });
+          // filter items
+          const cards = Array.from(grid.children);
+          cards.forEach((card) => {
+            const tags = (card.dataset.tags || "").split(/\s+/);
+            const show = cat === "all" || tags.includes(cat);
+            card.style.display = show ? "" : "none";
+          });
+        }
+        chips.forEach((chip) =>
+          chip.addEventListener("click", () => applyFilter(chip.dataset.filter))
+        );
+
+        // Initial render
+        render(aboutItems);
+        applyFilter("all");
       })();
     </script>
   </body>
