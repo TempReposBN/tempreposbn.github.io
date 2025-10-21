@@ -156,7 +156,10 @@
 
       #stage-2 .research-col {
         /* tighter vertical rhythm inside columns */
-        gap: clamp(8px, 1.2vmin, 12px);
+        display: flex;
+        flex-direction: column;
+        gap: clamp(12px, 2vmin, 18px);
+        transform: translateY(var(--stagger, 0px));
       }
 
       #stage-2 .tile {
@@ -254,6 +257,7 @@
         gap: clamp(24px, 3vmin, 36px);
         align-items: start;
         justify-items: stretch;
+        z-index: 5;
       }
 
       /* Responsive stacking still applies */
@@ -266,25 +270,6 @@
         #stage-2 .research-board {
           grid-template-columns: 1fr;
         }
-      }
-
-      /* ===== Stage 2: 3-column project board ===== */
-      .research-board {
-        width: min(1200px, 92vw);
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: clamp(14px, 2.2vmin, 22px);
-        align-items: start;
-        z-index: 5; /* over bg */
-      }
-
-      .research-col {
-        display: flex;
-        flex-direction: column;
-        gap: clamp(12px, 2vmin, 18px);
-        /* optional stagger so columns aren’t perfectly aligned */
-        transform: translateY(var(--stagger, 0px));
       }
 
       .tile {
@@ -435,6 +420,7 @@
         gap: 6px;
         margin-top: 0.5rem;
       }
+
       .badge {
         padding: 0.25em 0.6em;
         border-radius: 999px;
@@ -448,21 +434,6 @@
         font-size: clamp(10px, 1.35vmin, 12px);
         color: #fff;
         white-space: nowrap;
-      }
-
-      /* responsive: stack columns on small screens */
-      @media (max-width: 900px) {
-        .research-board {
-          grid-template-columns: 1fr 1fr;
-        }
-      }
-      @media (max-width: 640px) {
-        .research-board {
-          grid-template-columns: 1fr;
-        }
-        .research-col {
-          transform: none;
-        }
       }
 
       .bg-video {
@@ -612,14 +583,6 @@
           0 0 16px rgba(125, 175, 255, 0.35);
       }
 
-      /* Optional: zoom-in effect on profile photo itself */
-      .hero--with-photo .profile-img {
-        transition: transform 0.6s ease;
-      }
-
-      .hero--with-photo .profile:hover .profile-img {
-        transform: scale(1.3);
-      }
 
       @media (max-width: 860px) {
         .hero--with-photo .hero-wrap {
@@ -766,12 +729,6 @@
           var(--fs-sub-max)
         );
         line-height: 1.6;
-      }
-
-      /* Button row (if you add CTAs later) */
-      .cta {
-        gap: 14px;
-        margin-top: clamp(14px, 2.2vw, 22px);
       }
 
       .btn {
@@ -1573,7 +1530,7 @@
         border: 2px solid rgba(255, 255, 255, 0.18);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08),
           0 calc(2.4 * var(--u)) calc(7 * var(--u)) rgba(0, 0, 0, 0.55);
-        aspect-ratio: 10 / 5;
+        aspect-ratio: 8 / 5;
       }
 
       .card__media::after {
@@ -1609,6 +1566,7 @@
           text-align: center;
         }
       }
+      
     </style>
   </head>
 
