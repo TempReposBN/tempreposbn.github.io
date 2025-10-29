@@ -86,7 +86,7 @@
         bottom: 0;
         width: 25vw;
         /* how wide the fade columns are */
-        z-index: 3;
+        z-index: 0;
         /* above video/nodes, but below nav/hero */
         pointer-events: none;
         /* let clicks through */
@@ -1617,8 +1617,8 @@
         width: min(1200px, 92vw);
         margin: clamp(12px, 3vmin, 24px) auto 0;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: clamp(14px, 2.4vmin, 24px);
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: clamp(18px, 3vmin, 28px);
         align-items: start;
         z-index: 5;
       }
@@ -1637,6 +1637,8 @@
         transition: transform 0.25s ease, box-shadow 0.25s ease,
           border-color 0.25s ease;
         cursor: zoom-in;
+        display: flex;
+        flex-direction: column;
       }
       .about-card:hover {
         transform: translateY(-6px) scale(1.03);
@@ -1645,7 +1647,7 @@
           0 0 12px rgba(77, 163, 255, 0.25);
       }
       .about-card__media {
-        aspect-ratio: 4 / 3;
+        aspect-ratio: 16 / 10;
         width: 100%;
         height: auto;
         display: block;
@@ -1672,11 +1674,10 @@
       }
 
       .about-card__body {
-        position: absolute;
         left: 8px;
         right: 8px;
         bottom: 8px;
-        padding: 10px 12px;
+        padding: 14px 16px;
         border-radius: calc(1 * var(--u));
         background: linear-gradient(
           180deg,
@@ -1685,16 +1686,21 @@
         );
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
+        position: static;
+        inset: auto;
+        margin: 10px;
       }
+
       .about-card__title {
         margin: 0 0 4px;
         font-weight: 800;
-        font-size: clamp(14px, 2vmin, 18px);
+        font-size: clamp(16px, 2.4vmin, 22px);
         background: linear-gradient(180deg, #fff, #dfe9ff 70%, #a7baff);
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
       }
+
       .about-card__meta {
         display: flex;
         flex-wrap: wrap;
@@ -1728,15 +1734,18 @@
       }
       .about-lightbox.is-open {
         display: flex;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
       }
+
       .about-lightbox__frame {
         position: relative;
         margin: 0;
-        max-width: min(1200px, 92vw);
+        max-width: min(1100px, 92vw);
         max-height: 86vh;
         display: grid;
-        grid-template-rows: 1fr auto;
-        gap: 10px;
+        grid-template-rows: auto auto;
+        gap: 12px;
         background: linear-gradient(
           180deg,
           rgba(8, 10, 18, 0.82),
@@ -1744,8 +1753,10 @@
         );
         border: 1px solid rgba(255, 255, 255, 0.18);
         border-radius: calc(1.6 * var(--u));
-        padding: clamp(8px, 1.4vmin, 14px);
-        box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55);
+        padding: clamp(10px, 1.6vmin, 18px);
+        box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55),
+          0 0 0 1px rgba(125, 175, 255, 0.1) inset;
+        justify-content: center;
       }
       .about-lightbox__frame img {
         width: 100%;
@@ -1775,6 +1786,213 @@
         transform: translateY(-1px);
       }
 
+      /* Constrain and center the media cleanly */
+      #aboutLightboxImg {
+        display: block;
+        max-width: 100%;
+        max-height: min(62vh, 70svh); /* smaller & consistent across devices */
+        object-fit: contain;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+        background: rgba(255, 255, 255, 0.02);
+        margin: 0 auto;
+      }
+
+      /* Caption as a tidy block with clear hierarchy */
+      .about-lightbox__frame figcaption {
+        display: grid;
+        row-gap: 6px;
+        padding: 10px 6px 6px;
+        max-width: 820px; /* keep a readable measure */
+        margin: 0 auto;
+        text-align: left;
+        color: #e7edff;
+      }
+
+      .lb-cap-title {
+        font-weight: 800;
+        font-size: clamp(18px, 2.2vmin, 22px);
+        line-height: 1.2;
+        letter-spacing: 0.2px;
+        background: linear-gradient(180deg, #fff, #dfe9ff 70%, #a7baff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .lb-cap-meta {
+        font-size: clamp(11px, 1.35vmin, 13px);
+        color: #cfe0ff;
+        opacity: 0.9;
+      }
+
+      .lb-cap-body {
+        margin-top: 6px;
+        font-size: clamp(12px, 1.65vmin, 16px);
+        line-height: 1.6;
+        color: #e7edff;
+        opacity: 0.95;
+      }
+
+      .lb-viewport {
+        position: relative;
+        width: min(1100px, 89vw);
+        height: min(62vh, 70svh);
+        border-radius: 14px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.02);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+        display: inline-block;
+        align-items: center;
+        justify-content: center;
+        place-items: center;
+      }
+
+      .lb-track {
+        position: absolute;
+        display: flex;
+        height: 100%;
+        inset: 0;
+        align-items: center;
+        transition: transform 0.45s ease;
+        will-change: transform;
+      }
+
+      .lb-slide {
+        flex: 0 0 100%;
+        min-width: 100%;
+        height: 100%;
+        place-items: center;
+        background: rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .lb-slide img,
+      .lb-slide video {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        display: block;
+      }
+
+      .lb-dots {
+        position: absolute;
+        left: 50%;
+        top: 10px;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 6px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.55),
+          rgba(8, 10, 18, 0.38)
+        );
+        backdrop-filter: blur(6px);
+        z-index: 5;
+      }
+
+      .lb-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.2);
+        opacity: 0.8;
+      }
+      .lb-dot[aria-current="true"] {
+        background: linear-gradient(180deg, #fff, #e8f1ff);
+        border-color: rgba(255, 255, 255, 0.95);
+        opacity: 1;
+        transform: scale(1.05);
+        box-shadow: 0 0 0 2px rgba(77, 163, 255, 0.25);
+      }
+
+      .lb-nav {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        pointer-events: none;
+        z-index: 5;
+        background: none;
+      }
+      .lb-btn {
+        pointer-events: auto;
+        display: grid;
+        place-items: center;
+        margin: 8px;
+        align-self: end; /* sit near bottom */
+        width: clamp(64px, 10vmin, 96px);
+        height: clamp(40px, 5vmin, 56px);
+        border-radius: 10px;
+        font-size: clamp(18px, 2.2vmin, 24px);
+        background: linear-gradient(
+          180deg,
+          rgba(8, 10, 18, 0.55),
+          rgba(8, 10, 18, 0.42)
+        );
+
+        
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: #e7edff;
+        font-weight: 800;
+        user-select: none;
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+      }
+      
+      .lb-btn:hover {
+        filter: brightness(1.5);
+        transform: translateY(-2px);
+      }
+
+      .lb-count {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.45);
+        color: #e7edff;
+        font-size: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        z-index: 6;
+      }
+
+      @media (max-width: 640px) {
+        .lb-viewport {
+          height: 56vh;
+        }
+      }
+
+      /* Close button: tighter & cleaner */
+      .about-lightbox__close {
+        top: 8px;
+        right: 8px;
+        border-radius: 10px;
+        padding: 6px 10px;
+        font-weight: 800;
+        background: rgba(8, 10, 18, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      /* Mobile refinements */
+      @media (max-width: 640px) {
+        #aboutLightboxImg {
+          max-height: 56vh;
+        }
+        .about-lightbox__frame {
+          padding: 10px;
+          gap: 10px;
+        }
+      }
+
       #stage-3 .hero {
         bottom: auto;
         left: auto;
@@ -1787,6 +2005,20 @@
 
       #stage-3 .hero .card {
         margin-inline: auto; /* safety for older browsers */
+      }
+
+      /* Optional: on very large screens, enforce fewer columns (bigger tiles) */
+      @media (min-width: 1400px) {
+        #stage-3 .about-grid {
+          grid-template-columns: repeat(3, 1fr); /* lock to 3 columns max */
+        }
+      }
+
+      /* Optional: on phones, keep them comfortably big */
+      @media (max-width: 560px) {
+        #stage-3 .about-grid {
+          grid-template-columns: 1fr; /* single big tile per row on small screens */
+        }
       }
     </style>
   </head>
@@ -2215,10 +2447,6 @@
       <section class="hero" id="aboutme" aria-labelledby="aboutTitle">
         <div class="card" role="banner">
           <h1 class="title" id="aboutTitle">About Me</h1>
-          <p class="subtitle">
-            A mix of research, making, sport, and community projects. Click any
-            tile to peek.
-          </p>
 
           <!-- Filter chips -->
           <div
@@ -2238,7 +2466,7 @@
               class="chip"
               role="tab"
               aria-selected="false"
-              data-filter="research"
+              data-filter="Research"
             >
               Research
             </button>
@@ -2246,7 +2474,23 @@
               class="chip"
               role="tab"
               aria-selected="false"
-              data-filter="builds"
+              data-filter="University"
+            >
+              University
+            </button>
+            <button
+              class="chip"
+              role="tab"
+              aria-selected="false"
+              data-filter="School"
+            >
+              School
+            </button>
+            <button
+              class="chip"
+              role="tab"
+              aria-selected="false"
+              data-filter="Builds"
             >
               Builds
             </button>
@@ -2254,7 +2498,7 @@
               class="chip"
               role="tab"
               aria-selected="false"
-              data-filter="sport"
+              data-filter="Sport"
             >
               Sport
             </button>
@@ -2262,15 +2506,7 @@
               class="chip"
               role="tab"
               aria-selected="false"
-              data-filter="community"
-            >
-              Community
-            </button>
-            <button
-              class="chip"
-              role="tab"
-              aria-selected="false"
-              data-filter="travel"
+              data-filter="Travel"
             >
               Travel
             </button>
@@ -2278,7 +2514,7 @@
               class="chip"
               role="tab"
               aria-selected="false"
-              data-filter="life"
+              data-filter="Life"
             >
               Life
             </button>
@@ -2304,7 +2540,41 @@
           aria-modal="true"
           aria-label="Image viewer"
         >
-          <img id="aboutLightboxImg" alt="" />
+          <div class="lb-viewport" id="lbViewport">
+            <div class="lb-track" id="lbTrack" role="list"></div>
+
+            <!-- dots -->
+            <div
+              class="lb-dots"
+              id="lbDots"
+              role="tablist"
+              aria-label="Slides"
+            ></div>
+
+            <!-- prev / next -->
+            <div class="lb-nav" aria-hidden="false">
+              <button
+                class="lb-btn"
+                id="lbPrev"
+                type="button"
+                aria-label="Previous"
+              >
+                ‹
+              </button>
+              <button
+                class="lb-btn"
+                id="lbNext"
+                type="button"
+                aria-label="Next"
+              >
+                ›
+              </button>
+            </div>
+
+            <!-- counter -->
+            <div class="lb-count" id="lbCount">1 / 1</div>
+          </div>
+
           <figcaption id="aboutLightboxCap"></figcaption>
         </figure>
       </div>
@@ -3133,11 +3403,17 @@
       (function initStage3About() {
         const grid = document.getElementById("aboutGrid");
         const lb = document.getElementById("aboutLightbox");
-        const lbImg = document.getElementById("aboutLightboxImg");
-        const lbVideo = document.createElement("video");
+        const lbViewport = document.getElementById("lbViewport");
+        const lbTrack = document.getElementById("lbTrack");
+        const lbDots = document.getElementById("lbDots");
+        const lbPrev = document.getElementById("lbPrev");
+        const lbNext = document.getElementById("lbNext");
+        const lbCount = document.getElementById("lbCount");
         const lbCap = document.getElementById("aboutLightboxCap");
         const lbClose = document.getElementById("aboutLightboxClose");
-        if (!grid || !lb || !lbImg || !lbCap || !lbClose || !lbVideo) return;
+
+        if (!grid || !lb || !lbViewport || !lbTrack || !lbDots || !lbPrev || !lbNext || !lbCount || !lbCap || !lbClose) return;
+
 
         // ---- EDIT ME: add/modify your entries here ----
         // tag options used by filters: research | builds | sport | community | travel | life
@@ -3145,82 +3421,109 @@
           {
             title: "Journey in NUS",
             media: [
-              { type: "img",   src: "about/1.JPG" },
-              { type: "img",   src: "about/2.jpg" },
-              { type: "img",   src: "about/3.jpg" },
-              { type: "img",   src: "about/4.jpg" },
-              { type: "img",   src: "about/5.jpg" },
-              { type: "img",   src: "about/6.jpg" },
-              { type: "img",   src: "about/7.jpg" },
-              { type: "img",   src: "about/8.jpg" },
-              { type: "video",   src: "about/9.mp4" },
+              { type: "img", src: "about/2.JPG" },
+              { type: "img", src: "about/5.jpg" },
+              { type: "img", src: "about/3.jpg" },
+              { type: "img", src: "about/4.jpg" },
+              { type: "img", src: "about/1.jpg" },
+              { type: "img", src: "about/6.jpg" },
+              { type: "img", src: "about/7.jpg" },
+              { type: "img", src: "about/8.jpg" },
+              { type: "video", src: "about/9.mp4" },
+              { type: "video", src: "about/grad_vid.mp4" },
             ],
-            img: "about/4.jpg",
-            cap: "At NUS (2021-2025) I grew from child with a dream to a researcher. Graduated with Highest Distinction in Biomedical Engineering, winning the Medical Grand Challenge, leading the Archery Club, and contributing brain-signals and gait projects in N.1 Lab and iHealthtech",
-            tags: ["university", "school", "self"],
-          },
-          {
-            title: "Younger Self",
-            img: "about/meg_setup.jpg",
-            cap: "Adapted the active/passive touch pipeline from EEG to MEG; revamped processing.",
-            tags: ["self"],
-            year: 2024,
+            img: "about/2.jpg",
+            cap: "At NUS (2021-2025) I grew from child with a dream to a researcher. \
+            Graduated with Highest Distinction in Biomedical Engineering, winning the \
+            Medical Grand Challenge, leading the Archery Club, and contributing \
+            brain-signals and gait projects in N.1 Lab and iHealthtech",
+            tags: ["University", "School", "Life"],
           },
           {
             title: "My Dream",
-            img: "about/imu_path.jpg",
-            cap: "Long-walk drift reduction with RTS smoothing, soft ZUPT, and event detection.",
-            tags: ["self"],
-            year: 2025,
+            media: [
+              { type: "img", src: "about/octavius.jpg" },
+              { type: "img", src: "about/matrix_poster.JPG" },
+              { type: "img", src: "about/matrix_meme.jpg" },
+            ],
+            cap: "My earliest dream was to connect brain and computer so I could live \
+            inside ideas, not just read them. I pictured plugging my mind in and walking \
+            around worlds I made myself. Many years later that's still my goal.",
+            tags: ["Life"],
           },
           {
-            title: "Nixie lock",
-            img: "about/theta_plot.jpg",
-            cap: "Goal-directed navigation: pre-navigation theta encodes spatial context.",
-            tags: ["research"],
-            year: 2025,
+            title: "Nixie clock",
+            media: [
+              { type: "img", src: "about/nixie3.jpg" },
+              { type: "img", src: "about/nixie_case.jpg" },
+              { type: "video", src: "about/nixie2.mp4" },
+              { type: "video", src: "about/nixie1.mp4" },
+            ],
+            cap: "My DIY nixie clock: old-school tubes from USSR, new & fresh look. \
+            It doesn't do much for now, but it looks cool. Still deciding on what the \
+            screen will display.",
+            tags: ["Builds", "Hobby"],
           },
           {
-            title: "Theatre with Elders",
-            img: "about/theatre_elderly.jpg",
-            cap: "Intergenerational creative workshops to spark shared memories and stories.",
-            tags: ["community", "life"],
-            year: 2025,
+            title: "EEG Headset",
+            img: "about/EEG_stuff.jpg",
+            cap: "I recently got an EMOTIV EPOC X EEG headset and have been messing around with it. \
+            I look at how the signal changes with different tasks (eg when I'm gaming), \
+            and watching the frequency bands changing in real time in different contexts. \
+            My short-term goal is to train a personal model that can replace a few in-game \
+            commands with EEG signals. I'm still new to this, but it's fun and I'm learning \
+            alot.",
+            tags: ["Hobby", "Research"],
           },
           {
             title: "3D Prints & Fixtures",
-            img: "about/3d_print.jpg",
-            cap: "Rapid prototyping mounts and fixtures; tuned tolerances for lab rigs.",
-            tags: ["builds"],
-            year: 2023,
+            media: [
+              { type: "img", src: "about/nixie_case.jpg" },
+              { type: "img", src: "about/mgc_print.jpg" },
+              { type: "img", src: "about/mgc_all.jpg" },
+              { type: "video", src: "about/v1.mp4" },
+              { type: "img", src: "about/3d_cast_setup.jpg" },
+              { type: "video", src: "about/3d_cast.mp4" },
+              { type: "img", src: "about/tabletop_print.jpg" },
+            ],
+            cap: "I really enjoy designing and 3D printing and designing parts for my \
+            projects & hobby. 3D printing allows me to bring my silly ideas to life.",
+            tags: ["Builds", "Hobby"],
           },
           {
             title: "Hiking & Travel",
-            img: "about/hike.jpg",
-            cap: "Refuel the brain outside the lab—trails, sunrises, and far too many photos.",
-            tags: ["travel", "life"],
-            year: 2023,
+            media: [
+              { type: "img", src: "about/hike2.jpg" },
+              { type: "img", src: "about/hike3.jpg" },
+              { type: "video", src: "about/hike1.mp4" },
+              { type: "img", src: "about/travel1.jpg" },
+              { type: "img", src: "about/travel2.jpg" },
+              { type: "img", src: "about/travel3.jpg" },
+              { type: "video", src: "about/v2.mp4" },
+              { type: "video", src: "about/travel6.mp4" },
+              { type: "img", src: "about/travel4.jpg" },
+              { type: "img", src: "about/travel5.jpg" },
+            ],
+            cap: "I love hiking and travel. I've climbed an active volcano, hiked in Switzerland, \
+            and I'm always looking for the next hike. Always being on the move and in nature makes me feel alive.",
+            tags: ["Travel", "Life", "Sport"]
           },
           {
-            title: "Photography",
-            img: "about/photo.jpg",
-            cap: "Low-light, portraits, and little moments that feel bigger later.",
-            tags: ["life"],
-            year: 2022,
-          },
-          {
-            title: "Co-authoring First Paper",
-            img: "about/writing.jpg",
-            cap: "Drafting results, figures, and methods—turning experiments into narrative.",
-            tags: ["research", "life"],
-            year: 2025,
-          },
-          {
-            title: "Gym & Conditioning",
-            img: "about/gym.jpg",
-            cap: "Strength & mobility for archery and lab stamina.",
-            tags: ["sport", "life"],
-            year: 2024,
+            title: "Gym & Sports",
+            media: [
+              { type: "img", src: "about/1.jpg" },
+              { type: "video", src: "about/gym1.mp4" },
+              { type: "img", src: "about/archery1.jpg" },
+              { type: "video", src: "about/archery2.mp4" },
+              { type: "video", src: "about/archery3.mp4" },
+              { type: "video", src: "about/climb1.mp4" },
+              { type: "video", src: "about/hike1.mp4" },
+              { type: "img", src: "about/hike2.jpg" },
+
+            ],
+            cap: "I stay active with gym, badminton, climbing, \
+            and archery. Good amount of exercise always keeps me balanced and clears my head.",
+            tags: ["Sport", "Life"],
           },
         ];
         // -----------------------------------------------
@@ -3232,21 +3535,25 @@
           li.setAttribute("role", "listitem");
           li.dataset.tags = item.tags.join(" ");
 
+          // choose thumbnail: explicit item.img OR first media src
+          const thumbSrc =
+            item.img ||
+            (item.media && item.media[0] && item.media[0].src) ||
+            "";
           const img = new Image();
           img.loading = "lazy";
           img.decoding = "async";
-          img.src = item.img;
+          img.src = thumbSrc;
           img.alt = item.title;
           img.className = "about-card__media";
 
-          // If the image fails to load, swap in a styled placeholder pane
+          // graceful placeholder if thumb fails
           img.onerror = () => {
-            img.remove(); // avoids the browser painting the alt text visually
+            img.remove();
             const ph = document.createElement("div");
             ph.className = "about-card__ph";
-            // keep accessible name via aria-label (the title still exists below too)
             ph.setAttribute("aria-label", item.title);
-            li.insertBefore(ph, body);
+            li.appendChild(ph); // simpler & safe
           };
 
           const body = document.createElement("div");
@@ -3258,16 +3565,12 @@
 
           const meta = document.createElement("div");
           meta.className = "about-card__meta";
-
-          // year (if provided)
           if (item.year) {
             const y = document.createElement("span");
             y.className = "about-tag";
             y.textContent = item.year;
             meta.appendChild(y);
           }
-
-          // tags
           item.tags.forEach((t) => {
             const span = document.createElement("span");
             span.className = "about-tag";
@@ -3281,10 +3584,8 @@
           li.appendChild(img);
           li.appendChild(body);
 
-          // lightbox open
-          li.addEventListener("click", () =>
-            openLightbox(item.img, item.title, item.cap || "")
-          );
+          // open lightbox with the whole item (so we can read item.media)
+          li.addEventListener("click", () => openLightbox(item));
           return li;
         }
 
@@ -3292,33 +3593,189 @@
           grid.innerHTML = "";
           items.forEach((it) => grid.appendChild(makeCard(it)));
         }
+        // ==== Lightbox (multi-slide) ====
 
-        // Lightbox controls
-        function openLightbox(src, alt, cap) {
-          lbImg.src = src;
-          lbImg.alt = alt || "";
-          lbCap.textContent = cap || "";
+
+        let lbSlides = [];
+        let lbIdx = 0;
+
+        function buildSlides(mediaArr) {
+          lbTrack.innerHTML = "";
+          lbDots.innerHTML = "";
+          lbSlides = mediaArr || [];
+
+          lbSlides.forEach((m, i) => {
+            const slide = document.createElement("div");
+            slide.className = "lb-slide";
+            slide.setAttribute("role", "listitem");
+
+            if (m.type === "video") {
+              const v = document.createElement("video");
+
+              // Set attributes first (before src)
+              v.muted = true;
+              v.setAttribute("muted", "");          // boolean attr for Safari
+              v.playsInline = true;
+              v.setAttribute("playsinline", "");    // iOS Safari
+              v.loop = true;
+              v.preload = "metadata";
+              v.controls = true;
+
+              v.src = m.src;
+              v.setAttribute("aria-label", m.alt || `Slide ${i + 1}`);
+
+              // Try to start once metadata is ready (frame can paint)
+              v.addEventListener("loadeddata", () => {
+                // Try to play; if blocked, at least the first frame is visible
+                try { v.play(); } catch {}
+              }, { once: true });
+              v.addEventListener("error", () => {
+                const msg = document.createElement("div");
+                msg.style.cssText = "color:#e7edff; font-weight:700; padding:12px; text-align:center;";
+                msg.textContent = "Video failed to load.";
+                // Replace the slide content
+                slide.innerHTML = "";
+                slide.appendChild(msg);
+              }, { once: true });
+
+              slide.appendChild(v);
+            } else {
+              const img = new Image();
+              img.src = m.src;
+              img.alt = m.alt || `Slide ${i + 1}`;
+              slide.appendChild(img);
+            }
+            lbTrack.appendChild(slide);
+
+            const dot = document.createElement("button");
+            dot.className = "lb-dot";
+            dot.type = "button";
+            dot.setAttribute("role", "tab");
+            dot.setAttribute("aria-label", `Go to slide ${i + 1}`);
+            dot.addEventListener("click", () => goTo(i, true));
+            lbDots.appendChild(dot);
+          });
+        }
+
+        function updateLbUI() {
+          lbTrack.style.transform = `translateX(${-lbIdx * 100}%)`;
+          [...lbDots.children].forEach((d, i) =>
+            d.setAttribute("aria-current", i === lbIdx ? "true" : "false")
+          );
+          lbCount.textContent = `${lbIdx + 1} / ${lbSlides.length}`;
+
+          // ensure only current video plays
+          lbTrack.querySelectorAll("video").forEach((v, i) => {
+            if (i === lbIdx) {
+              try {
+                v.play();
+              } catch {}
+            } else {
+              v.pause();
+              v.currentTime = 0;
+            }
+          });
+        }
+
+        function goTo(i, user = false) {
+          if (!lbSlides.length) return;
+          lbIdx = (i + lbSlides.length) % lbSlides.length;
+          updateLbUI();
+        }
+
+        function openLightbox(item) {
+          const media =
+            Array.isArray(item.media) && item.media.length
+              ? item.media
+              : item.img
+              ? [{ type: "img", src: item.img }]
+              : [];
+
+
+          // 1) Show the lightbox first so videos aren’t created in a hidden tree
           lb.classList.add("is-open");
           lb.setAttribute("aria-hidden", "false");
           document.body.style.overflow = "hidden";
+
+          // 2) Now build slides & caption
+          buildSlides(media);
+          lbCap.innerHTML = (() => {
+            const metaBits = [];
+            if (item.year) metaBits.push(item.year);
+            if (item.tags?.length) metaBits.push(item.tags.join(" · "));
+            return `
+              <div class="lb-cap-title">${item.title || ""}</div>
+              ${metaBits.length ? `<div class="lb-cap-meta">${metaBits.join(" • ")}</div>` : ""}
+              ${item.cap ? `<p class="lb-cap-body">${item.cap}</p>` : ""}
+            `;
+          })();
+
+          // 3) Go to first slide and kick playback once visible (double-RAF = reliably “after paint”)
+          lbIdx = 0;
+          updateLbUI();
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              lbTrack.querySelectorAll("video").forEach(v => {
+                try { v.play(); } catch {}
+              });
+            });
+          });
+
           lbClose.focus();
         }
+
         function closeLightbox() {
           lb.classList.remove("is-open");
           lb.setAttribute("aria-hidden", "true");
           document.body.style.overflow = "";
-          lbImg.src = "";
-          lbImg.alt = "";
-          lbCap.textContent = "";
+          lbTrack.querySelectorAll("video").forEach(v => {
+            try { v.pause(); } catch {}
+            v.removeAttribute("src");
+            v.load();
+          });
+          lbTrack.innerHTML = "";
+          lbDots.innerHTML = "";
+          lbCap.innerHTML = "";
+          lbSlides = [];
+          lbIdx = 0;
         }
+
+        lbPrev.addEventListener("click", () => goTo(lbIdx - 1, true));
+        lbNext.addEventListener("click", () => goTo(lbIdx + 1, true));
         lbClose.addEventListener("click", closeLightbox);
         lb.addEventListener("click", (e) => {
           if (e.target === lb) closeLightbox();
         });
         document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape" && lb.classList.contains("is-open"))
-            closeLightbox();
+          if (!lb.classList.contains("is-open")) return;
+          if (e.key === "Escape") closeLightbox();
+          if (e.key === "ArrowRight") goTo(lbIdx + 1, true);
+          if (e.key === "ArrowLeft") goTo(lbIdx - 1, true);
         });
+
+        // touch swipe inside lightbox
+        (() => {
+          let touchX = null;
+          lbViewport.addEventListener(
+            "touchstart",
+            (e) => {
+              touchX = e.touches[0].clientX;
+            },
+            { passive: true }
+          );
+          lbViewport.addEventListener(
+            "touchend",
+            (e) => {
+              if (touchX == null) return;
+              const dx = e.changedTouches[0].clientX - touchX;
+              const TH = Math.max(24, lbViewport.clientWidth * 0.07);
+              if (dx > TH) goTo(lbIdx - 1, true);
+              if (dx < -TH) goTo(lbIdx + 1, true);
+              touchX = null;
+            },
+            { passive: true }
+          );
+        })();
 
         // Filters
         const chips = Array.from(document.querySelectorAll("#stage-3 .chip"));
