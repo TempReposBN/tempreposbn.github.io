@@ -242,7 +242,7 @@
       }
 
       #stage-2 .research-board {
-        width: min(1200px, 92vw);
+        width: min(1480px, 96vw);
         margin: 0 auto;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -304,11 +304,10 @@
 
       /* Apply the ratio only to actual media containers */
       .tile--pic[data-slides] .tile-slider {
-        aspect-ratio: 4 / 3;
+        aspect-ratio: 1 / 1;
         width: 100%;
         height: auto;
         border-radius: inherit;
-        overflow: hidden; /* keep content from pushing height */
       }
 
       .tile-track {
@@ -330,7 +329,7 @@
       .tile-slide video {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain;
         display: block;
         object-position: center;
         border-radius: inherit;
@@ -1062,7 +1061,7 @@
         position: fixed;
         right: calc(1.2 * var(--u));
         bottom: calc(1.2 * var(--u));
-        z-index: 60;
+        z-index: 10;
         /* above rail */
         display: none;
         align-items: center;
@@ -1939,14 +1938,13 @@
           rgba(8, 10, 18, 0.42)
         );
 
-        
         border: 1px solid rgba(255, 255, 255, 0.18);
         color: #e7edff;
         font-weight: 800;
         user-select: none;
         text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
       }
-      
+
       .lb-btn:hover {
         filter: brightness(1.5);
         transform: translateY(-2px);
@@ -2173,78 +2171,6 @@
         </a>
       </div>
 
-      <!-- Media Rail (top-right) -->
-      <aside class="media-rail" aria-label="Media carousel">
-        <div class="media-viewport" id="mediaViewport">
-          <!-- Top dots only -->
-          <div class="media-dots-overlay">
-            <div
-              class="media-dots"
-              id="mediaDots"
-              role="tablist"
-              aria-label="Slides"
-            ></div>
-          </div>
-
-          <!-- Slides -->
-          <div class="media-track" id="mediaTrack" role="list"></div>
-
-          <!-- Bottom wide nav -->
-          <div class="media-bottom-nav" aria-label="Media navigation">
-            <button
-              class="media-btn media-btn--wide"
-              id="mediaPrev"
-              aria-label="Previous"
-              type="button"
-            >
-              ‹
-            </button>
-            <button
-              class="media-btn media-btn--wide"
-              id="mediaNext"
-              aria-label="Next"
-              type="button"
-            >
-              ›
-            </button>
-          </div>
-          <button
-            class="media-enlarge-btn"
-            id="mediaEnlarge"
-            type="button"
-            aria-label="Enlarge media"
-            aria-pressed="false"
-            title="Enlarge"
-          >
-            ⤢
-          </button>
-        </div>
-
-        <button
-          class="media-minimize-btn"
-          id="mediaMinimize"
-          type="button"
-          aria-label="Minimize media"
-          aria-pressed="false"
-          title="Minimize"
-        >
-          –
-        </button>
-      </aside>
-
-      <button
-        class="media-tab"
-        id="mediaTab"
-        type="button"
-        aria-label="Open media"
-        title="Maximise Media Display"
-      >
-        <!-- Use your own logo asset here -->
-        <img src="max_tab.png" alt="Maximise Media Display" />
-        <!-- Fallback text if image fails -->
-        <span class="media-tab__fallback">OPEN</span>
-      </button>
-
       <div class="footer">
         © <span id="y"></span> Eric Liu • Made with HTML/CSS/JS
       </div>
@@ -2322,7 +2248,7 @@
             aria-label="Project 1"
           >
             <article class="tile tile--text">
-              <div class="tile__eyebrow">Project 1</div>
+              <div class="tile__eyebrow">@NUS N.1 Lab</div>
               <h3 class="tile__title">
                 Hippocampal Theta During Goal-Directed Navigation
               </h3>
@@ -2367,14 +2293,18 @@
             aria-label="Project 2"
           >
             <article class="tile tile--text">
-              <div class="tile__eyebrow">Project 2</div>
+              <div class="tile__eyebrow">@NUS IHealthtech</div>
               <h3 class="tile__title">
                 Robust Foot-Mounted IMU Trajectory Estimation
               </h3>
               <p>
-                A zero-velocity-aided pipeline with RTS-Kalman smoothing and
-                soft stance detection to curb drift during long indoor walks.
-                Benchmarked with Bland–Altman analysis.
+                We built a foot-mounted, 9-axis IMU pipeline that reconstructs
+                walking trajectories and estimates spatiotemporal gait from
+                insole-embedded sensors. The system couples VQF for attitude
+                with a ZUPT-aided RTS ESKF for drift-robust position/velocity,
+                and includes practical in-situ magnetometer calibration
+                collected during circular walking. We validated against Movella
+                MVN Awinda in real-world settings.
               </p>
               <div class="badges">
                 <span class="badge">RTS-Kalman</span>
@@ -2387,13 +2317,19 @@
                 C++/Arduino • Python • Experiment Running • IMU Algo
               </div>
             </article>
-            <article class="tile tile--pic">
-              <img
-                src="self.jpg"
-                alt="Recovered walking path from IMU data"
-                loading="lazy"
-              />
-            </article>
+            <article
+              class="tile tile--pic"
+              data-slides='[
+                "IMU_proj/wear.jpg",
+                "IMU_proj/setup.PNG",
+                "IMU_proj/field.PNG",
+                "IMU_proj/mag_views.PNG",
+                "IMU_proj/mag_cal.PNG",
+                "IMU_proj/trajectory_carpark.PNG",
+                "IMU_proj/spatial_parameters.PNG"
+              ]'
+              role="listitem"
+            ></article>
           </div>
 
           <!-- Column 3 -->
@@ -2404,7 +2340,7 @@
             aria-label="Project 3"
           >
             <article class="tile tile--text">
-              <div class="tile__eyebrow">Project 3</div>
+              <div class="tile__eyebrow">@EPFL TNE Lab</div>
               <h3 class="tile__title">Active and Passive Touch with EEG</h3>
               <p>
                 Multimodal decoding of place/goal context using regularized
@@ -2581,6 +2517,78 @@
 
       <div class="stage-edge stage-edge--bottom"></div>
     </div>
+
+    <button
+      class="media-tab"
+      id="mediaTab"
+      type="button"
+      aria-label="Open media"
+      title="Maximise Media Display"
+    >
+      <!-- Use your own logo asset here -->
+      <img src="max_tab.png" alt="Maximise Media Display" />
+      <!-- Fallback text if image fails -->
+      <span class="media-tab__fallback">OPEN</span>
+    </button>
+
+    <!-- Media Rail (top-right) -->
+    <aside class="media-rail" aria-label="Media carousel">
+      <div class="media-viewport" id="mediaViewport">
+        <!-- Top dots only -->
+        <div class="media-dots-overlay">
+          <div
+            class="media-dots"
+            id="mediaDots"
+            role="tablist"
+            aria-label="Slides"
+          ></div>
+        </div>
+
+        <!-- Slides -->
+        <div class="media-track" id="mediaTrack" role="list"></div>
+
+        <!-- Bottom wide nav -->
+        <div class="media-bottom-nav" aria-label="Media navigation">
+          <button
+            class="media-btn media-btn--wide"
+            id="mediaPrev"
+            aria-label="Previous"
+            type="button"
+          >
+            ‹
+          </button>
+          <button
+            class="media-btn media-btn--wide"
+            id="mediaNext"
+            aria-label="Next"
+            type="button"
+          >
+            ›
+          </button>
+        </div>
+        <button
+          class="media-enlarge-btn"
+          id="mediaEnlarge"
+          type="button"
+          aria-label="Enlarge media"
+          aria-pressed="false"
+          title="Enlarge"
+        >
+          ⤢
+        </button>
+      </div>
+
+      <button
+        class="media-minimize-btn"
+        id="mediaMinimize"
+        type="button"
+        aria-label="Minimize media"
+        aria-pressed="false"
+        title="Minimize"
+      >
+        –
+      </button>
+    </aside>
 
     <script>
       // Footer year
@@ -3412,8 +3420,19 @@
         const lbCap = document.getElementById("aboutLightboxCap");
         const lbClose = document.getElementById("aboutLightboxClose");
 
-        if (!grid || !lb || !lbViewport || !lbTrack || !lbDots || !lbPrev || !lbNext || !lbCount || !lbCap || !lbClose) return;
-
+        if (
+          !grid ||
+          !lb ||
+          !lbViewport ||
+          !lbTrack ||
+          !lbDots ||
+          !lbPrev ||
+          !lbNext ||
+          !lbCount ||
+          !lbCap ||
+          !lbClose
+        )
+          return;
 
         // ---- EDIT ME: add/modify your entries here ----
         // tag options used by filters: research | builds | sport | community | travel | life
@@ -3426,6 +3445,7 @@
               { type: "img", src: "about/3.jpg" },
               { type: "img", src: "about/4.jpg" },
               { type: "img", src: "about/1.jpg" },
+              { type: "img", src: "about/10.jpg" },
               { type: "img", src: "about/6.jpg" },
               { type: "img", src: "about/7.jpg" },
               { type: "img", src: "about/8.jpg" },
@@ -3495,6 +3515,7 @@
             media: [
               { type: "img", src: "about/hike2.jpg" },
               { type: "img", src: "about/hike3.jpg" },
+              { type: "img", src: "about/h1.jpg" },
               { type: "video", src: "about/hike1.mp4" },
               { type: "img", src: "about/travel1.jpg" },
               { type: "img", src: "about/travel2.jpg" },
@@ -3506,7 +3527,7 @@
             ],
             cap: "I love hiking and travel. I've climbed an active volcano, hiked in Switzerland, \
             and I'm always looking for the next hike. Always being on the move and in nature makes me feel alive.",
-            tags: ["Travel", "Life", "Sport"]
+            tags: ["Travel", "Life", "Sport"],
           },
           {
             title: "Gym & Sports",
@@ -3519,7 +3540,6 @@
               { type: "video", src: "about/climb1.mp4" },
               { type: "video", src: "about/hike1.mp4" },
               { type: "img", src: "about/hike2.jpg" },
-
             ],
             cap: "I stay active with gym, badminton, climbing, \
             and archery. Good amount of exercise always keeps me balanced and clears my head.",
@@ -3595,7 +3615,6 @@
         }
         // ==== Lightbox (multi-slide) ====
 
-
         let lbSlides = [];
         let lbIdx = 0;
 
@@ -3614,9 +3633,9 @@
 
               // Set attributes first (before src)
               v.muted = true;
-              v.setAttribute("muted", "");          // boolean attr for Safari
+              v.setAttribute("muted", ""); // boolean attr for Safari
               v.playsInline = true;
-              v.setAttribute("playsinline", "");    // iOS Safari
+              v.setAttribute("playsinline", ""); // iOS Safari
               v.loop = true;
               v.preload = "metadata";
               v.controls = true;
@@ -3625,18 +3644,29 @@
               v.setAttribute("aria-label", m.alt || `Slide ${i + 1}`);
 
               // Try to start once metadata is ready (frame can paint)
-              v.addEventListener("loadeddata", () => {
-                // Try to play; if blocked, at least the first frame is visible
-                try { v.play(); } catch {}
-              }, { once: true });
-              v.addEventListener("error", () => {
-                const msg = document.createElement("div");
-                msg.style.cssText = "color:#e7edff; font-weight:700; padding:12px; text-align:center;";
-                msg.textContent = "Video failed to load.";
-                // Replace the slide content
-                slide.innerHTML = "";
-                slide.appendChild(msg);
-              }, { once: true });
+              v.addEventListener(
+                "loadeddata",
+                () => {
+                  // Try to play; if blocked, at least the first frame is visible
+                  try {
+                    v.play();
+                  } catch {}
+                },
+                { once: true }
+              );
+              v.addEventListener(
+                "error",
+                () => {
+                  const msg = document.createElement("div");
+                  msg.style.cssText =
+                    "color:#e7edff; font-weight:700; padding:12px; text-align:center;";
+                  msg.textContent = "Video failed to load.";
+                  // Replace the slide content
+                  slide.innerHTML = "";
+                  slide.appendChild(msg);
+                },
+                { once: true }
+              );
 
               slide.appendChild(v);
             } else {
@@ -3691,7 +3721,6 @@
               ? [{ type: "img", src: item.img }]
               : [];
 
-
           // 1) Show the lightbox first so videos aren’t created in a hidden tree
           lb.classList.add("is-open");
           lb.setAttribute("aria-hidden", "false");
@@ -3705,7 +3734,11 @@
             if (item.tags?.length) metaBits.push(item.tags.join(" · "));
             return `
               <div class="lb-cap-title">${item.title || ""}</div>
-              ${metaBits.length ? `<div class="lb-cap-meta">${metaBits.join(" • ")}</div>` : ""}
+              ${
+                metaBits.length
+                  ? `<div class="lb-cap-meta">${metaBits.join(" • ")}</div>`
+                  : ""
+              }
               ${item.cap ? `<p class="lb-cap-body">${item.cap}</p>` : ""}
             `;
           })();
@@ -3715,8 +3748,10 @@
           updateLbUI();
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-              lbTrack.querySelectorAll("video").forEach(v => {
-                try { v.play(); } catch {}
+              lbTrack.querySelectorAll("video").forEach((v) => {
+                try {
+                  v.play();
+                } catch {}
               });
             });
           });
@@ -3728,8 +3763,10 @@
           lb.classList.remove("is-open");
           lb.setAttribute("aria-hidden", "true");
           document.body.style.overflow = "";
-          lbTrack.querySelectorAll("video").forEach(v => {
-            try { v.pause(); } catch {}
+          lbTrack.querySelectorAll("video").forEach((v) => {
+            try {
+              v.pause();
+            } catch {}
             v.removeAttribute("src");
             v.load();
           });
