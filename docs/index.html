@@ -2101,15 +2101,15 @@
       <!-- Nodes (anchored as % inside the video) -->
       <div
         class="node"
-        data-link="#research"
-        data-label="Research"
+        data-link="#interest"
+        data-label="Interests"
         data-ax="25"
         data-ay="45"
       ></div>
       <div
         class="node"
-        data-link="#projects"
-        data-label="Projects"
+        data-link="#research"
+        data-label="Research"
         data-ax="46"
         data-ay="44"
       ></div>
@@ -2321,12 +2321,12 @@
               class="tile tile--pic"
               data-slides='[
                 "IMU_proj/wear.jpg",
-                "IMU_proj/setup.PNG",
-                "IMU_proj/field.PNG",
-                "IMU_proj/mag_views.PNG",
-                "IMU_proj/mag_cal.PNG",
-                "IMU_proj/trajectory_carpark.PNG",
-                "IMU_proj/spatial_parameters.PNG"
+                "IMU_proj/setup.png",
+                "IMU_proj/field.png",
+                "IMU_proj/mag_views.png",
+                "IMU_proj/mag_cal.png",
+                "IMU_proj/trajectory_carpark.png",
+                "IMU_proj/spatial_parameters.png"
               ]'
               role="listitem"
             ></article>
@@ -2343,9 +2343,16 @@
               <div class="tile__eyebrow">@EPFL TNE Lab</div>
               <h3 class="tile__title">Active and Passive Touch with EEG</h3>
               <p>
-                Multimodal decoding of place/goal context using regularized
-                classifiers and time-generalization matrices; probing
-                cross-frequency coupling as a driver.
+                We investigated how the brain processes active vs. passive touch
+                in a virtual environment using EEG. In our experiment,
+                participants either moved their hand toward a virtual object
+                (active touch) or experienced the object moving toward their
+                hand (passive touch), under conditions with and without tactile
+                feedback. We preprocessed the EEG with standard signal
+                processing methods, including ICA-based artifact removal, and
+                then analyzed event-related potentials (ERPs) to compare how
+                these different interaction modes and feedback conditions shape
+                neural responses to touch.
               </p>
               <div class="badges">
                 <span class="badge">Signal Processing</span>
@@ -2354,13 +2361,14 @@
               </div>
               <div class="tile__meta">Scikit-learn (CV) • MNE • ICA</div>
             </article>
-            <article class="tile tile--pic">
-              <img
-                src="self.jpg"
-                alt="Time-generalization matrix heatmap"
-                loading="lazy"
-              />
-            </article>
+            <article
+              class="tile tile--pic"
+              data-slides='[
+                "touch_proj/past_paper.jpg",
+                "touch_proj/ica.jpg"
+              ]'
+              role="listitem"
+            ></article>
           </div>
         </div>
       </div>
@@ -2611,7 +2619,7 @@
           { type: "img", src: "media/11.jpg" },
           { type: "img", src: "media/12.jpg" },
           { type: "img", src: "media/13.jpg" },
-          { type: "video", src: "media/v1.mp4" },
+          { type: "video", src: "about/v1.mp4" },
           { type: "video", src: "media/v2.mp4" },
         ];
 
@@ -3532,10 +3540,9 @@
           {
             title: "Gym & Sports",
             media: [
-              { type: "img", src: "about/1.jpg" },
+              { type: "img", src: "about/1.JPG" },
               { type: "video", src: "about/gym1.mp4" },
               { type: "img", src: "about/archery1.jpg" },
-              { type: "video", src: "about/archery2.mp4" },
               { type: "video", src: "about/archery3.mp4" },
               { type: "video", src: "about/climb1.mp4" },
               { type: "video", src: "about/hike1.mp4" },
