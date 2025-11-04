@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Eric Liu — About Me</title>
+
+    <!-- Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #f3f6ff;
+        --text: #020617;
+        --text-soft: #111827;
+        --muted: #6b7280;
+        --border-subtle: rgba(15, 23, 42, 0.12);
+        --radius-lg: 18px;
+
+        --card-bg: #ffffff;
+        --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", Roboto, sans-serif;
+        background: radial-gradient(
+            1200px 800px at 12% 0%,
+            rgba(96, 165, 250, 0.26),
+            transparent 60%
+          ),
+          radial-gradient(
+            1200px 800px at 88% 100%,
+            rgba(129, 140, 248, 0.3),
+            transparent 60%
+          ),
+          linear-gradient(180deg, #f9fbff, #e3ecff);
+        color: var(--text);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        padding-top: 90px; /* space under fixed nav */
+      }
+
+      .page {
+        max-width: 1120px;
+        width: 100%;
+        margin: 0 auto;
+        padding: clamp(18px, 4vw, 32px) clamp(14px, 4vw, 32px)
+          clamp(24px, 6vw, 40px);
+      }
+
+      /* Top nav (same style as research/interests/publications) */
+      .nav {
+        position: fixed;
+        top: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: rgba(248, 250, 252, 0.96);
+        border: 1px solid rgba(148, 163, 184, 0.55);
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        z-index: 50;
+      }
+
+      .brand {
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-size: 11px;
+        margin-right: 4px;
+        background: linear-gradient(120deg, #1d4ed8, #2563eb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .nav a {
+        color: #4b5563;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+
+      .nav a:hover {
+        background: rgba(219, 234, 254, 0.95);
+        color: #1d4ed8;
+      }
+
+      /* Header */
+      .header {
+        margin-bottom: clamp(20px, 4vw, 32px);
+      }
+
+      .kicker {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: #6b7280;
+        margin-bottom: 8px;
+      }
+
+      .title {
+        margin: 0 0 10px;
+        font-size: clamp(26px, 3.2vw, 32px);
+        line-height: 1.15;
+        font-weight: 800;
+        background: linear-gradient(120deg, #0f172a, #1d4ed8, #4f46e5);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .subtitle {
+        margin: 0;
+        max-width: 50rem;
+        font-size: 14px;
+        line-height: 1.7;
+        color: var(--text-soft);
+      }
+
+      .subtitle strong {
+        color: #0f172a;
+      }
+
+      /* Main about layout */
+      .about {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(22px, 3vw, 30px);
+      }
+
+      .about-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+        gap: clamp(16px, 3vw, 28px);
+        align-items: start;
+      }
+
+      .about-panel {
+        border-radius: var(--radius-lg);
+        background: var(--card-bg);
+        border: 1px solid var(--border-subtle);
+        box-shadow: var(--shadow-soft);
+        padding: clamp(16px, 2.4vw, 22px);
+      }
+
+      .about-panel--main {
+        font-size: 14px;
+        line-height: 1.8;
+        color: var(--text-soft);
+      }
+
+      .about-panel--main p {
+        margin: 0 0 10px;
+      }
+
+      .about-panel--main p:last-child {
+        margin-bottom: 0;
+      }
+
+      .about-section-title {
+        margin: 0 0 8px;
+        font-size: 16px;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .about-subheading {
+        margin: 12px 0 4px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #6b7280;
+      }
+
+      .about-list {
+        list-style: none;
+        padding: 0;
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: var(--text-soft);
+      }
+
+      .about-list li {
+        margin-bottom: 6px;
+      }
+
+      .about-list li:last-child {
+        margin-bottom: 0;
+      }
+
+      /* Gallery / snapshots */
+      .about-gallery {
+        margin-top: 4px;
+      }
+
+      .about-gallery-title {
+        margin: 0 0 4px;
+        font-size: 15px;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .about-gallery-intro {
+        margin: 0 0 12px;
+        font-size: 13px;
+        color: var(--muted);
+        max-width: 42rem;
+      }
+
+      .about-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: clamp(16px, 3vw, 24px);
+        margin-top: 8px;
+      }
+
+      .about-card {
+        border-radius: var(--radius-lg);
+        background: radial-gradient(
+            160% 200% at 0% 0%,
+            rgba(219, 234, 254, 0.5),
+            transparent 60%
+          ),
+          radial-gradient(
+            160% 200% at 100% 100%,
+            rgba(221, 214, 254, 0.45),
+            transparent 60%
+          ),
+          #ffffff;
+        border: 1px solid var(--border-subtle);
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .about-card-media {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        display: block;
+      }
+
+      @media (min-width: 1200px) {
+        .about-card-media {
+          height: 190px;
+        }
+      }
+
+      .about-card-body {
+        padding: 12px 14px 14px;
+      }
+
+      .about-card-title {
+        margin: 0 0 4px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #020617;
+      }
+
+      .about-card-text {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--text-soft);
+      }
+
+      .about-card-tags {
+        margin-top: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .tag {
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        border: 1px solid rgba(148, 163, 184, 0.8);
+        background: #f9fafb;
+        color: #111827;
+      }
+
+      .tag--blue {
+        border-color: rgba(37, 99, 235, 0.9);
+        background: linear-gradient(
+          130deg,
+          rgba(59, 130, 246, 0.24),
+          rgba(191, 219, 254, 0.98)
+        );
+        color: #1d4ed8;
+      }
+
+      .tag--soft {
+        border-color: rgba(168, 85, 247, 0.8);
+        background: linear-gradient(
+          130deg,
+          rgba(196, 181, 253, 0.3),
+          rgba(237, 233, 254, 0.98)
+        );
+        color: #6d28d9;
+      }
+
+      /* Footer */
+      .footer {
+        max-width: 1120px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 clamp(14px, 4vw, 32px) clamp(18px, 4vw, 28px);
+        font-size: 11px;
+        color: #6b7280;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        border-top: 1px solid rgba(148, 163, 184, 0.35);
+        margin-top: 28px;
+      }
+
+      .footer span {
+        white-space: nowrap;
+      }
+
+      /* Responsive tweaks */
+      @media (max-width: 880px) {
+        .about-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .footer {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .nav {
+          gap: 10px;
+          padding: 10px 14px;
+        }
+      }
+
+      .skills-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-top: 6px;
+      }
+
+      .skills-row {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 8px 10px;
+        align-items: center;
+      }
+
+      .skills-label {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #6b7280;
+      }
+
+      .skills-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .about-panel--side {
+        font-size: 13px;
+        line-height: 1.7;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Top navigation (same pill nav as other pages) -->
+    <nav class="nav" aria-label="Primary">
+      <div class="brand">ERIC&nbsp;LIU</div>
+      <a href="index.html#stage">Home</a>
+      <a href="research.html">Research</a>
+      <a href="interests.html">Interests</a>
+      <a href="publications.html">Publications</a>
+      <a href="aboutme.html">About Me</a>
+    </nav>
+
+    <div class="page">
+      <!-- Page header -->
+      <header class="header" aria-labelledby="page-title">
+        <div class="kicker">Who I am</div>
+        <h1 id="page-title" class="title">About Me</h1>
+        <p class="subtitle">
+          I’m Eric, a <strong>Biomedical Engineering</strong> graduate from
+          <strong>NUS</strong> who likes problems where
+          <strong>brain signals</strong>, <strong>movement</strong>, and
+          <strong>hardware</strong> have to work together — ideally in ways that
+          end up helping real people.
+        </p>
+      </header>
+
+      <main class="about">
+        <!-- Overview -->
+        <section
+          class="about-layout"
+          aria-label="Overview and quick facts about Eric"
+        >
+          <article class="about-panel about-panel--main" id="overview">
+            <h2 class="about-section-title">A brief version</h2>
+            <p>
+              I’m Eric — I recently finished my B.Eng. in Biomedical Engineering
+              at the National University of Singapore, graduating with
+              <strong>Highest Distinction</strong>. Along the way I helped win
+              the <strong>Medical Grand Challenge</strong> and spent a lot of
+              time in labs working with brain and motion data.
+            </p>
+
+            <p>
+              On the research side, I’ve worked on
+              <strong>hippocampal theta</strong> during goal-directed virtual
+              navigation in macaques (N.1 Lab), foot-mounted
+              <strong>IMU pipelines</strong> for real-world gait on tracks and
+              pavements (NUS iHealthtech), and <strong>EEG</strong> experiments
+              on active vs. passive touch in VR (EPFL TNE Lab). Most of my work
+              are within the intersection of <strong>signal processing</strong>,
+              <strong>neuroscience</strong>, and
+              <strong>embedded systems</strong>.
+            </p>
+
+            <p>
+              Outside of formal projects, I like to build things! From
+              nixie-tube clocks to 3D-printed fixtures to Apps. Lately I’ve been
+              playing with an EMOTIV EPOC&nbsp;X EEG headset and sketching ideas
+              for small, personal model to replace a few everyday actions.
+            </p>
+
+            <p>
+              Outside of research, I’m usually
+              <strong>lifting at the gym</strong>, shooting
+              <strong>archery</strong>, <strong>hiking</strong>, or travelling.
+              Being outdoors and moving around keeps me sane and motivated when
+              work gets intense.
+            </p>
+          </article>
+
+          <aside
+            class="about-panel about-panel--side"
+            aria-label="Skills and tools"
+          >
+            <h2 class="about-section-title">Skills</h2>
+
+            <div class="skills-rows">
+              <div class="skills-row">
+                <div class="skills-label">Code</div>
+                <div class="skills-tags">
+                  <span class="tag">Python</span>
+                  <span class="tag">C++ / Embedded</span>
+                  <span class="tag">Unity</span>
+                  <span class="tag">HTML / CSS / JS</span>
+                </div>
+              </div>
+
+              <div class="skills-row">
+                <div class="skills-label">Signals</div>
+                <div class="skills-tags">
+                  <span class="tag">EEG</span>
+                  <span class="tag">LFP</span>
+                  <span class="tag">Gait</span>
+                  <span class="tag">Filtering &amp; ICA</span>
+                </div>
+              </div>
+
+              <div class="skills-row">
+                <div class="skills-label">Hardware</div>
+                <div class="skills-tags">
+                  <span class="tag">SolidWorks</span>
+                  <span class="tag">AutoCAD</span>
+                  <span class="tag">3D printing</span>
+                  <span class="tag">IMU builds</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <!-- Snapshots / cards based on your main-page About section -->
+        <section class="about-gallery" aria-labelledby="about-gallery-title">
+          <h2 id="about-gallery-title" class="about-gallery-title">
+            Snapshots
+          </h2>
+          <p class="about-gallery-intro">
+            A few slices of what life has looked like recently — from NUS labs
+            and projects to side builds, mountains, and sports.
+          </p>
+
+          <div class="about-grid">
+            <!-- Card 1: Journey in NUS -->
+            <article class="about-card">
+              <img
+                src="about/2.JPG"
+                alt="Eric with friends at NUS"
+                class="about-card-media"
+              />
+              <div class="about-card-body">
+                <h3 class="about-card-title">Journey in NUS</h3>
+                <p class="about-card-text">
+                  At NUS (2021–2025) I grew from a kid with a wild
+                  brain–computer dream into a researcher. I graduated with
+                  Highest Distinction in Biomedical Engineering, helped win the
+                  Medical Grand Challenge, led the Archery Club, and contributed
+                  to projects on brain signals and gait in N.1 Lab and
+                  iHealthtech.
+                </p>
+                <div class="about-card-tags">
+                  <span class="tag tag--blue">University</span>
+                  <span class="tag">Research</span>
+                  <span class="tag">Life</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Card 2: My dream -->
+            <article class="about-card">
+              <img
+                src="about/octavius.jpg"
+                alt="Drawing inspired by Octavius-style neural interfaces"
+                class="about-card-media"
+              />
+              <div class="about-card-body">
+                <h3 class="about-card-title">My dream</h3>
+                <p class="about-card-text">
+                  Since I was young, I’ve wanted to connect brain and computer
+                  so I could “live inside ideas” instead of just reading about
+                  them. I imagined plugging my mind in and walking around worlds
+                  I built myself. Years later, that’s still the direction I’m
+                  moving towards.
+                </p>
+                <div class="about-card-tags">
+                  <span class="tag tag--soft">Motivation</span>
+                  <span class="tag">Neural interfaces</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Card 3: Nixie clock -->
+            <article class="about-card">
+              <img
+                src="about/nixie3.jpg"
+                alt="DIY nixie clock with glowing tubes"
+                class="about-card-media"
+              />
+              <div class="about-card-body">
+                <h3 class="about-card-title">DIY nixie clock</h3>
+                <p class="about-card-text">
+                  I built a nixie clock using old tubes from the USSR, wrapped
+                  in a cleaner, modern case. It doesn’t do much beyond telling
+                  time (for now), but I enjoy the mix of analog glow and custom
+                  electronics — and deciding what to show on the little screen.
+                </p>
+                <div class="about-card-tags">
+                  <span class="tag tag--blue">Builds</span>
+                  <span class="tag">Electronics</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Card 4: EEG headset -->
+            <article class="about-card">
+              <img
+                src="about/EEG_stuff.jpg"
+                alt="Desk setup with an EMOTIV EPOC X EEG headset"
+                class="about-card-media"
+              />
+              <div class="about-card-body">
+                <h3 class="about-card-title">EEG at home</h3>
+                <p class="about-card-text">
+                  I’ve been experimenting with an EMOTIV EPOC&nbsp;X EEG
+                  headset: looking at how my own signals change with different
+                  tasks (like gaming), watching the frequency bands move in
+                  real-time, and exploring how a small personal model could map
+                  a few in-game commands to EEG patterns.
+                </p>
+                <div class="about-card-tags">
+                  <span class="tag tag--blue">EEG</span>
+                  <span class="tag">BCI hobby</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Card 5: 3D prints & fixtures -->
+            <article class="about-card">
+              <img
+                src="about/nixie_case.jpg"
+                alt="3D-printed case and fixtures for projects"
+                class="about-card-media"
+              />
+              <div class="about-card-body">
+                <h3 class="about-card-title">3D prints &amp; fixtures</h3>
+                <p class="about-card-text">
+                  I enjoy designing and 3D-printing parts for both research
+                  setups and random ideas. It’s satisfying to sketch something,
+                  print it, and then see it holding a sensor, a screen, or a
+                  weird little experiment together on the desk.
+                </p>
+                <div class="about-card-tags">
+                  <span class="tag tag--blue">Builds</span>
+                  <span class="tag">Prototyping</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Card 6: Hiking & travel -->
+            <article class="about-card">
+              <img
+                src="about/hike2.jpg"
+                alt="Hiking view from a mountain trail"
+                class="about-card-media"
+              />
+              <div class="about-card-body">
+                <h3 class="about-card-title">Hiking &amp; travel</h3>
+                <p class="about-card-text">
+                  I love being outdoors — from hiking up an active volcano to
+                  walking in the Swiss mountains. Travel and long hikes reset my
+                  brain and give me time to think about ideas away from screens
+                  and signals.
+                </p>
+                <div class="about-card-tags">
+                  <span class="tag tag--soft">Travel</span>
+                  <span class="tag">Hiking</span>
+                  <span class="tag">Life</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Card 7: Gym & sports -->
+            <article class="about-card">
+              <img
+                src="about/1.JPG"
+                alt="Eric training in the gym"
+                class="about-card-media"
+              />
+              <div class="about-card-body">
+                <h3 class="about-card-title">Gym &amp; sports</h3>
+                <p class="about-card-text">
+                  I stay active with gym, badminton, climbing, hiking, and
+                  archery. A steady rhythm of training keeps me balanced and
+                  clears my head when research or builds get intense.
+                </p>
+                <div class="about-card-tags">
+                  <span class="tag tag--blue">Sport</span>
+                  <span class="tag">Routine</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <span>© <span id="year"></span> Eric Liu</span>
+    </footer>
+
+    <script>
+      document.getElementById("year").textContent = new Date()
+        .getFullYear()
+        .toString();
+    </script>
+  </body>
+</html>

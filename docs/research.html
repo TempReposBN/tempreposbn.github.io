@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Eric Liu — Research Projects</title>
+
+    <!-- Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #f3f6ff;
+        --bg-soft: #e7edff;
+        --bg-card: #ffffff;
+        --text: #111827;
+        --text-soft: #4b5563;
+        --muted: #6b7280;
+        --brand: #2563eb;
+        --brand-soft: #60a5fa;
+        --border-subtle: rgba(15, 23, 42, 0.06);
+        --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.12);
+        --radius-lg: 18px;
+        --radius-pill: 999px;
+        --u: 1vmin;
+        /* nav font sizes to match home page */
+        --fs-nav-min: 11px;
+        --fs-nav-pref: calc(1.6 * var(--u));
+        --fs-nav-max: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", Roboto, sans-serif;
+        background: radial-gradient(
+            1200px 800px at 12% 0%,
+            rgba(96, 165, 250, 0.26),
+            transparent 60%
+          ),
+          radial-gradient(
+            1200px 800px at 88% 100%,
+            rgba(129, 140, 248, 0.3),
+            transparent 60%
+          ),
+          linear-gradient(180deg, #f9fbff, #e3ecff);
+        color: var(--text);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        padding-top: 90px; /* space under fixed nav */
+      }
+
+      .page {
+        max-width: 1120px;
+        width: 100%;
+        margin: 0 auto;
+        padding: clamp(18px, 4vw, 32px) clamp(14px, 4vw, 32px)
+          clamp(24px, 6vw, 40px);
+      }
+      /* ===== Top nav (light version for research page) ===== */
+      .nav {
+        position: fixed;
+        top: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: rgba(248, 250, 252, 0.96); /* light glassy pill */
+        border: 1px solid rgba(148, 163, 184, 0.55);
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        z-index: 50;
+      }
+
+      .brand {
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-size: 11px;
+        margin-right: 4px;
+        background: linear-gradient(120deg, #1d4ed8, #2563eb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .nav a {
+        color: #4b5563; /* darker, matches body text */
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+
+      .nav a:hover {
+        background: rgba(219, 234, 254, 0.95); /* light blue hover */
+        color: #1d4ed8; /* NUS-ish blue accent */
+      }
+
+      /* ===== Page header ===== */
+      .header {
+        margin-bottom: clamp(20px, 4vw, 36px);
+      }
+
+      .kicker {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: #6b7280;
+        margin-bottom: 8px;
+      }
+
+      .title {
+        margin: 0 0 10px;
+        font-size: clamp(26px, 3.2vw, 32px);
+        line-height: 1.15;
+        font-weight: 800;
+        background: linear-gradient(120deg, #0f172a, #1d4ed8, #4f46e5);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .subtitle {
+        margin: 0;
+        max-width: 60rem;
+        font-size: 14px;
+        line-height: 1.65;
+        color: var(--text-soft);
+      }
+
+      .subtitle strong {
+        font-weight: 700;
+        color: #111827;
+      }
+
+      /* ===== Projects list ===== */
+      .projects {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(18px, 3.4vw, 26px);
+      }
+
+      .project {
+        display: grid;
+        grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.3fr);
+        gap: clamp(14px, 2.4vw, 26px);
+        padding: clamp(16px, 2.6vw, 22px);
+        border-radius: var(--radius-lg);
+        background: radial-gradient(
+            260% 260% at 0% 0%,
+            rgba(129, 140, 248, 0.16),
+            transparent 40%
+          ),
+          radial-gradient(
+            260% 260% at 100% 100%,
+            rgba(56, 189, 248, 0.09),
+            transparent 40%
+          ),
+          var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .project-header {
+        margin-bottom: 8px;
+      }
+
+      .project-eyebrow {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #6b7280;
+        margin-bottom: 4px;
+      }
+
+      .project-title {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.35;
+        font-weight: 800;
+        color: #0f172a;
+      }
+
+      .project-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .tag {
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: rgba(255, 255, 255, 0.9);
+        color: #374151;
+      }
+
+      .tag--blue {
+        border-color: rgba(37, 99, 235, 0.5);
+        background: linear-gradient(
+          130deg,
+          rgba(59, 130, 246, 0.12),
+          rgba(59, 130, 246, 0.04)
+        );
+        color: #1d4ed8;
+      }
+
+      .project-lead {
+        margin: 8px 0 12px;
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--text-soft);
+      }
+
+      .project-lead strong {
+        color: #111827;
+      }
+
+      .project-body {
+        display: grid;
+        gap: 10px;
+      }
+
+      .section-label {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #111827;
+        margin-bottom: 6px;
+      }
+
+      .project-list {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--text-soft);
+      }
+
+      .project-list li + li {
+        margin-top: 4px;
+      }
+
+      .project-media {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+        gap: 8px;
+      }
+
+      .project-thumb {
+        margin: 0;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #e5edff;
+        border: 1px solid rgba(148, 163, 184, 0.55);
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+      }
+
+      .project-thumb img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        transition: transform 0.18s ease, filter 0.18s ease;
+      }
+
+      .project-thumb:hover img {
+        transform: scale(1.03);
+        filter: saturate(1.05);
+      }
+
+      .project-aside {
+        border-radius: 14px;
+        background: linear-gradient(
+          145deg,
+          rgba(248, 250, 252, 0.9),
+          rgba(239, 246, 255, 0.95)
+        );
+        border: 1px solid rgba(148, 163, 184, 0.35);
+        padding: 12px 14px 13px;
+        display: grid;
+        gap: 8px;
+        align-content: flex-start;
+      }
+
+      .meta-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .meta-label {
+        font-weight: 600;
+        color: #4b5563;
+      }
+
+      .meta-value {
+        text-align: right;
+      }
+
+      .pill-line {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .pill {
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+        background: rgba(37, 99, 235, 0.06);
+        color: #1d4ed8;
+      }
+
+      .hint {
+        font-size: 11px;
+        color: #6b7280;
+        margin-top: 2px;
+      }
+
+      .footer {
+        max-width: 1120px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 clamp(14px, 4vw, 32px) clamp(18px, 4vw, 28px);
+        font-size: 11px;
+        color: #6b7280;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        border-top: 1px solid rgba(148, 163, 184, 0.35);
+        margin-top: 28px;
+      }
+
+      .footer span {
+        white-space: nowrap;
+      }
+
+      @media (max-width: 880px) {
+        .project {
+          grid-template-columns: 1fr;
+        }
+
+        .project-aside {
+          order: -1;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .footer {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .nav {
+          gap: 10px;
+          padding: 10px 14px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Top navigation (same as main site) -->
+    <nav class="nav" aria-label="Primary">
+      <div class="brand">ERIC&nbsp;LIU</div>
+      <a href="index.html#stage">Home</a>
+      <a href="research.html">Research</a>
+      <a href="interests.html">Interests</a>
+      <a href="publications.html">Publications</a>
+      <a href="aboutme.html">About Me</a>
+    </nav>
+
+    <div class="page">
+      <!-- Page header -->
+      <section class="header" aria-labelledby="page-title">
+        <div class="kicker">Research Portfolio</div>
+        <h1 id="page-title" class="title">Research Projects</h1>
+      </section>
+
+      <!-- Projects -->
+      <main class="projects">
+        <!-- Project 1 -->
+        <article class="project">
+          <div>
+            <header class="project-header">
+              <div class="project-eyebrow">@NUS N.1 Lab</div>
+              <h2 class="project-title">
+                Hippocampal Theta for Spatial Memory Recall in a Virtual Maze
+              </h2>
+              <div class="project-tags">
+                <span class="tag tag--blue">Non-human primate</span>
+                <span class="tag">Hippocampal LFP</span>
+                <span class="tag">Theta power &amp; peak</span>
+                <span class="tag">Spatial memory</span>
+              </div>
+            </header>
+
+            <p class="project-lead">
+              I analyse hippocampal <strong>theta-band activity</strong> in a
+              macaque performing a joystick-controlled virtual maze task. The
+              focus is the <strong>1 s cue / path-planning period</strong> when
+              a visual poster cue indicates the goal location, the monkey
+              recalls its position relative to coloured pillars, and only then
+              starts to move.
+            </p>
+
+            <div class="project-body">
+              <div>
+                <div class="section-label">Key questions</div>
+                <ul class="project-list">
+                  <li>
+                    Does hippocampal theta power during the 1 s cue / planning
+                    period differ from a control inter-trial baseline?
+                  </li>
+                  <li>
+                    Is <strong>total theta power</strong> more strongly
+                    modulated by goal-directed visual cues (poster identity /
+                    cue pillar) than by spatial context (starting position /
+                    pillar)?
+                  </li>
+                  <li>
+                    Does <strong>theta peak power</strong> show
+                    interaction-driven selectivity that binds “what” (goal cue)
+                    and “where” (spatial context) information?
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <div class="section-label">Approach</div>
+                <ul class="project-list">
+                  <li>
+                    Joystick-based 3D virtual maze in Unity with
+                    <strong>6 fixed goal posters</strong> on
+                    <strong>4 coloured pillars</strong>; a trained macaque
+                    performs 400 trials per session across 5 days while we
+                    record hippocampal LFP, eye-tracking, and virtual position.
+                  </li>
+                  <li>
+                    Extract <strong>1 s cue-locked</strong> segments and
+                    matching control segments from 26 hippocampal channels;
+                    compute PSDs (Welch) and use <strong>FOOOF</strong> to
+                    separate aperiodic background from oscillatory peaks,
+                    yielding trial-wise <strong>total theta power</strong> and
+                    <strong>theta peak power</strong>.
+                  </li>
+                  <li>
+                    Run channel-wise t-tests (cue vs. control) and
+                    <strong>two-way ANOVAs</strong> over factor pairs (starting
+                    position / pillar × cue poster / pillar) to test whether
+                    theta encodes goal identity, spatial context, or their
+                    interaction.
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="project-media">
+              <figure class="project-thumb">
+                <img
+                  src="hippo_proj/maze_layout.PNG"
+                  alt="3D virtual maze used for hippocampal theta task"
+                />
+              </figure>
+              <figure class="project-thumb">
+                <img
+                  src="hippo_proj/trial_flow.PNG"
+                  alt="Example theta power changes during cue period"
+                />
+              </figure>
+              <figure class="project-thumb">
+                <img
+                  src="hippo_proj/channel_selectivity.PNG"
+                  alt="Channel-wise theta selectivity across cues and positions"
+                />
+              </figure>
+            </div>
+          </div>
+
+          <aside class="project-aside">
+            <div class="meta-row">
+              <span class="meta-label">Supervisor</span>
+              <span class="meta-value"> Dr Yen Shih Cheng (NUS N.1 Lab) </span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Status</span>
+              <span class="meta-value"> Completed B.Eng. FYP thesis </span>
+            </div>
+
+            <div class="section-label">Tooling</div>
+            <div class="pill-line">
+              <span class="pill">Python / NumPy / SciPy / Statsmodels</span>
+              <span class="pill">Custom LFP &amp; PSD pipeline</span>
+              <span class="pill">FOOOF spectral modelling</span>
+              <span class="pill">Unity-based VR task</span>
+            </div>
+          </aside>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="project">
+          <div>
+            <header class="project-header">
+              <div class="project-eyebrow">@NUS iHealthtech</div>
+              <h2 class="project-title">
+                Robust Foot-Mounted IMU Trajectory Estimation
+              </h2>
+              <div class="project-tags">
+                <span class="tag tag--blue">Wearable gait</span>
+                <span class="tag">9-axis IMU</span>
+                <span class="tag">RTS-ESKF</span>
+                <span class="tag">ZUPT</span>
+              </div>
+            </header>
+
+            <p class="project-lead">
+              We designed a custom
+              <strong>insole-embedded 9-axis IMU</strong> and a full algorithmic
+              pipeline to reconstruct walking trajectories and spatiotemporal
+              gait parameters from the feet, then validated against a
+              <strong>Movella MVN Awinda</strong> system on a 400&nbsp;m track.
+            </p>
+
+            <div class="project-body">
+              <div>
+                <div class="section-label">Pipeline</div>
+                <ul class="project-list">
+                  <li>
+                    Hardware: foam insole with removable IMU module (BMI270 +
+                    BMM350), ankle-mounted ESP32 data logger (100&nbsp;Hz).
+                  </li>
+                  <li>
+                    Preprocessing: accelerometer/gyro calibration,
+                    hard/soft-iron magnetometer compensation, alignment into an
+                    NWU global frame.
+                  </li>
+                  <li>
+                    Gait events: stance / swing detection using Tunca et al. 's
+                    event detector to segment strides and detect ZUPT phases.
+                  </li>
+                  <li>
+                    Trajectory: VQF for orientation + ZUPT-aided error-state
+                    Kalman filter with <strong>RTS smoothing</strong> for
+                    drift-robust foot paths and velocity.
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <div class="section-label">Validation &amp; outcomes</div>
+                <ul class="project-list">
+                  <li>
+                    Real-world walking trials (straight + curved) on a running
+                    track, synchronized with MVN Gait Report.
+                  </li>
+                  <li>
+                    Bland–Altman and correlation analysis for gait velocity,
+                    stride length/time, stance and swing time across trials.
+                  </li>
+                  <li>
+                    Demonstrated that a simple insole IMU system can approach
+                    the trajectory and gait parameter accuracy of a gold
+                    standard system in the field.
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="project-media">
+              <figure class="project-thumb">
+                <img
+                  src="IMU_proj/wear.jpg"
+                  alt="Insole-embedded IMU worn on foot"
+                />
+              </figure>
+              <figure class="project-thumb">
+                <img
+                  src="IMU_proj/trajectory_carpark.png"
+                  alt="Reconstructed walking trajectories on track"
+                />
+              </figure>
+              <figure class="project-thumb">
+                <img
+                  src="IMU_proj/spatial_parameters.png"
+                  alt="Estimated spatiotemporal gait parameters"
+                />
+              </figure>
+            </div>
+          </div>
+
+          <aside class="project-aside">
+            <div class="meta-row">
+              <span class="meta-label">Supervisor</span>
+              <span class="meta-value">A/Prof Ali Asgar Saleem Bhagat </span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Status</span>
+              <span class="meta-value"
+                >First-author manuscript in progress</span
+              >
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Signals</span>
+              <span class="meta-value">IMU data</span>
+            </div>
+
+            <div class="section-label">Tooling</div>
+            <div class="pill-line">
+              <span class="pill">C++ / Arduino (ESP32)</span>
+              <span class="pill">Python / Gaitmap</span>
+              <span class="pill">VQF attitude filter</span>
+              <span class="pill">RTS-ESKF trajectory</span>
+              <span class="pill">Bland–Altman statistics</span>
+            </div>
+            <p class="hint">
+              I also designed the insole housing and fixtures in CAD and
+              conducted experiments to test the IMU units.
+            </p>
+          </aside>
+        </article>
+
+        <!-- Project 3 -->
+        <article class="project">
+          <div>
+            <header class="project-header">
+              <div class="project-eyebrow">@EPFL TNE Lab</div>
+              <h2 class="project-title">Active vs Passive Touch with EEG</h2>
+              <div class="project-tags">
+                <span class="tag tag--blue">EEG</span>
+                <span class="tag">ERP</span>
+                <span class="tag">ICA preprocessing</span>
+                <span class="tag">Virtual interaction</span>
+              </div>
+            </header>
+
+            <p class="project-lead">
+              This project asks how the brain differentiates between
+              <strong>self-generated touch</strong> (moving your own hand) and
+              <strong>externally generated touch</strong> (the object comes to
+              you) in a controlled virtual environment, with and without
+              additional tactile feedback or vision.
+            </p>
+
+            <div class="project-body">
+              <div>
+                <div class="section-label">Task design</div>
+                <ul class="project-list">
+                  <li>
+                    Participants either moved their hand toward a virtual object
+                    (<strong>active touch</strong>) or experienced the object
+                    moving toward their hand (<strong>passive touch</strong>).
+                  </li>
+                  <li>
+                    Manipulation of <strong>vision</strong> and
+                    <strong>tactile feedback</strong> (with vs without) to
+                    separate visual, motor, and somatosensory contributions.
+                  </li>
+                  <li>
+                    Time-locked EEG epochs around contact onset to study
+                    event-related potentials (ERPs).
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <div class="section-label">EEG analysis</div>
+                <ul class="project-list">
+                  <li>
+                    Standard preprocessing with band-pass filtering and
+                    <strong>ICA-based artifact removal</strong> (eye-blinks,
+                    muscle activity).
+                  </li>
+                  <li>
+                    ERP comparison between active vs passive touch and between
+                    feedback conditions, focusing on early sensory components vs
+                    later cognitive components.
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="project-media">
+              <figure class="project-thumb">
+                <img
+                  src="touch_proj/past_paper.jpg"
+                  alt="Example stimulus setup from related tactile interaction paper"
+                />
+              </figure>
+              <figure class="project-thumb">
+                <img
+                  src="touch_proj/ica.jpg"
+                  alt="EEG ICA components during preprocessing"
+                />
+              </figure>
+            </div>
+          </div>
+
+          <aside class="project-aside">
+            <div class="meta-row">
+              <span class="meta-label">Supervisor</span>
+              <span class="meta-value">Prof Silvestro Micera</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Status</span>
+              <span class="meta-value"
+                >Collaborative project, project concluded</span
+              >
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Signals</span>
+              <span class="meta-value">64-channel EEG</span>
+            </div>
+
+            <div class="section-label">Tooling</div>
+            <div class="pill-line">
+              <span class="pill">Python / MNE</span>
+              <span class="pill">ICA artifact removal</span>
+              <span class="pill">ERP analysis</span>
+              <span class="pill">Scikit-learn (classification)</span>
+            </div>
+          </aside>
+        </article>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <span>© <span id="year"></span> Eric Liu</span>
+    </footer>
+
+    <script>
+      document.getElementById("year").textContent = new Date()
+        .getFullYear()
+        .toString();
+    </script>
+  </body>
+</html>

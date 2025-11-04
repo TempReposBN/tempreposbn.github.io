@@ -2037,10 +2037,11 @@
       <!-- Top nav -->
       <nav class="nav" aria-label="Primary">
         <div class="brand">ERIC&nbsp;LIU</div>
-        <a href="#research">Research</a>
-        <a href="#projects">Projects</a>
-        <a href="#publications">Publications</a>
-        <a href="#aboutme">About Me!</a>
+        <a href="index.html">Home</a>
+        <a href="research.html">Research</a>
+        <a href="interests.html">Interests</a>
+        <a href="publications.html">Publications</a>
+        <a href="aboutme.html">About Me</a>
       </nav>
 
       <!-- Hero -->
@@ -2108,7 +2109,7 @@
       ></div>
       <div
         class="node"
-        data-link="#research"
+        data-link="research.html"
         data-label="Research"
         data-ax="46"
         data-ay="44"
@@ -2850,7 +2851,7 @@
             n.prepend(plate);
           }
           n.addEventListener("click", () => {
-            if (link) window.location.hash = link;
+            window.location.href = link;
           });
         });
 

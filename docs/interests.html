@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Eric Liu — Research Interests</title>
+
+    <!-- Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #f3f6ff;
+        --text: #111827;
+        --text-soft: #4b5563;
+        --muted: #6b7280;
+        --border-subtle: rgba(15, 23, 42, 0.08);
+        --radius-lg: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", Roboto, sans-serif;
+        background: radial-gradient(
+            1200px 800px at 12% 0%,
+            rgba(96, 165, 250, 0.26),
+            transparent 60%
+          ),
+          radial-gradient(
+            1200px 800px at 88% 100%,
+            rgba(129, 140, 248, 0.3),
+            transparent 60%
+          ),
+          linear-gradient(180deg, #f9fbff, #e3ecff);
+        color: var(--text);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        padding-top: 90px; /* space under fixed nav */
+      }
+
+      .page {
+        max-width: 1120px;
+        width: 100%;
+        margin: 0 auto;
+        padding: clamp(18px, 4vw, 32px) clamp(14px, 4vw, 32px)
+          clamp(24px, 6vw, 40px);
+      }
+
+      /* Top nav (same style as research page) */
+      .nav {
+        position: fixed;
+        top: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: rgba(248, 250, 252, 0.96);
+        border: 1px solid rgba(148, 163, 184, 0.55);
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        z-index: 50;
+      }
+
+      .brand {
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-size: 11px;
+        margin-right: 4px;
+        background: linear-gradient(120deg, #1d4ed8, #2563eb);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .nav a {
+        color: #4b5563;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+
+      .nav a:hover {
+        background: rgba(219, 234, 254, 0.95);
+        color: #1d4ed8;
+      }
+
+      /* Header */
+      .header {
+        margin-bottom: clamp(20px, 4vw, 32px);
+      }
+
+      .kicker {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: #6b7280;
+        margin-bottom: 8px;
+      }
+
+      .title {
+        margin: 0 0 10px;
+        font-size: clamp(26px, 3.2vw, 32px);
+        line-height: 1.15;
+        font-weight: 800;
+        background: linear-gradient(120deg, #0f172a, #1d4ed8, #4f46e5);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .subtitle {
+        margin: 0;
+        max-width: 46rem;
+        font-size: 14px;
+        line-height: 1.7;
+        color: var(--text-soft);
+      }
+
+      /* Interests with photos */
+      .interests {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        margin-top: 8px;
+      }
+
+      .interest {
+        display: grid;
+        grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+        gap: 16px;
+        padding: 16px 18px;
+        border-radius: var(--radius-lg);
+        background: rgba(255, 255, 255, 0.96);
+        border: 1px solid var(--border-subtle);
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+      }
+
+      .interest:nth-child(even) {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+      }
+
+      .interest-content {
+        font-size: 13px;
+        line-height: 1.7;
+        color: var(--text-soft);
+      }
+
+      .interest-title {
+        margin: 0 0 4px;
+        font-size: 17px;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .interest-tagline {
+        margin: 0 0 8px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .interest-content p {
+        margin: 0 0 6px;
+      }
+
+      .interest-content ul {
+        margin: 6px 0 0;
+        padding-left: 18px;
+      }
+
+      .interest-content ul li + li {
+        margin-top: 2px;
+      }
+
+      .interest-media {
+        border-radius: 14px;
+        overflow: hidden;
+        background: #e5edff;
+        border: 1px solid rgba(148, 163, 184, 0.65);
+      }
+
+      .interest-media img {
+        width: 100%;
+        height: 100%;
+        max-height: 220px;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.2s ease, filter 0.2s ease;
+      }
+
+      .interest-media:hover img {
+        transform: scale(1.03);
+        filter: saturate(1.05);
+      }
+
+      .footer {
+        max-width: 1120px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 clamp(14px, 4vw, 32px) clamp(18px, 4vw, 28px);
+        font-size: 11px;
+        color: #6b7280;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        border-top: 1px solid rgba(148, 163, 184, 0.35);
+        margin-top: 28px;
+      }
+
+      .footer span {
+        white-space: nowrap;
+      }
+
+      @media (max-width: 880px) {
+        .interest,
+        .interest:nth-child(even) {
+          grid-template-columns: 1fr;
+        }
+
+        .interest-media img {
+          max-height: 260px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .footer {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .nav {
+          gap: 10px;
+          padding: 10px 14px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Top navigation -->
+    <nav class="nav" aria-label="Primary">
+      <div class="brand">ERIC&nbsp;LIU</div>
+      <a href="index.html#stage">Home</a>
+      <a href="research.html">Research</a>
+      <a href="interests.html">Interests</a>
+      <a href="publications.html">Publications</a>
+      <a href="aboutme.html">About Me</a>
+    </nav>
+
+    <div class="page">
+      <!-- Page header -->
+      <header class="header" aria-labelledby="page-title">
+        <div class="kicker">What I like working on</div>
+        <h1 id="page-title" class="title">Research Interests</h1>
+        <p class="subtitle">
+          I like questions where brain signals, movement, and hardware meet —
+          and where the end result is something that can actually be used in the
+          real world.
+        </p>
+      </header>
+
+      <main class="interests">
+        <!-- Interest 1 -->
+        <section class="interest">
+          <div class="interest-content">
+            <h2 class="interest-title">
+              Neural signals for memory and navigation
+            </h2>
+            <p class="interest-tagline">
+              How the brain keeps track of where we are and where we want to go.
+            </p>
+            <p>
+              I’m especially interested in theta-band activity in the
+              hippocampus and related areas, and how these rhythms change when
+              we plan, recall, or move through space — in both animals and
+              humans.
+            </p>
+            <ul>
+              <li>Planning vs movement-related changes in theta power.</li>
+              <li>How goals and context show up in LFP/EEG features.</li>
+              <li>Connecting virtual tasks with more natural behaviour.</li>
+            </ul>
+          </div>
+          <figure class="interest-media">
+            <!-- replace src with your own image -->
+            <img
+              src="images/interests/hippocampal_theta.jpg"
+              alt="Visual of a virtual maze and hippocampal activity"
+            />
+          </figure>
+        </section>
+
+        <!-- Interest 2 -->
+        <section class="interest">
+          <figure class="interest-media">
+            <img
+              src="images/interests/foot_imu.jpg"
+              alt="Insole-embedded IMU system on a running track"
+            />
+          </figure>
+          <div class="interest-content">
+            <h2 class="interest-title">Wearable gait sensing with IMUs</h2>
+            <p class="interest-tagline">
+              Making foot-mounted IMUs useful outside the lab.
+            </p>
+            <p>
+              I like building insole-based systems that estimate trajectories
+              and gait parameters from a few small sensors, then seeing how
+              close we can get to motion capture on real tracks and pavements.
+            </p>
+            <ul>
+              <li>Trajectory estimation with ZUPT and Kalman filters.</li>
+              <li>Handling drift and magnetometer issues in the wild.</li>
+              <li>Using gait as a window into ageing and disease.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Interest 3 -->
+        <section class="interest">
+          <div class="interest-content">
+            <h2 class="interest-title">
+              Brain–machine interfaces &amp; feedback
+            </h2>
+            <p class="interest-tagline">
+              Closing the loop between neural activity and useful actions.
+            </p>
+            <p>
+              I’m drawn to BMIs where the user gets clear feedback — visual,
+              haptic, or movement — and the system adapts based on how the brain
+              responds, not just one-way decoding.
+            </p>
+            <ul>
+              <li>EEG/LFP-based decoding of intent and state.</li>
+              <li>Shared control between user and device.</li>
+              <li>Tasks that separate prediction, action and feedback.</li>
+            </ul>
+          </div>
+          <figure class="interest-media">
+            <img
+              src="images/interests/bci_setup.jpg"
+              alt="Person interacting with a brain–computer interface setup"
+            />
+          </figure>
+        </section>
+
+        <!-- Interest 4 -->
+        <section class="interest">
+          <figure class="interest-media">
+            <img
+              src="images/interests/signal_pipeline.jpg"
+              alt="Code and plots for a signal processing pipeline"
+            />
+          </figure>
+          <div class="interest-content">
+            <h2 class="interest-title">
+              Signal processing &amp; clean pipelines
+            </h2>
+            <p class="interest-tagline">
+              Making messy data slightly less messy (and easier to reuse).
+            </p>
+            <p>
+              A lot of my time goes into building simple, transparent processing
+              chains for EEG, LFP and IMU data, and making sure the stats and
+              plots actually mean what we think they mean.
+            </p>
+            <ul>
+              <li>
+                Time–frequency analysis and spectral modelling (e.g. FOOOF).
+              </li>
+              <li>Artifact handling and honest quality checks.</li>
+              <li>Reproducible code that other people can actually run.</li>
+            </ul>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="footer">
+      <span>© <span id="year"></span> Eric Liu</span>
+    </footer>
+
+    <script>
+      document.getElementById("year").textContent = new Date()
+        .getFullYear()
+        .toString();
+    </script>
+  </body>
+</html>
