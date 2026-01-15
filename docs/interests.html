@@ -203,6 +203,7 @@
       .interest-media {
         border-radius: 14px;
         overflow: hidden;
+        min-height: 150px;
         background: #e5edff;
         border: 1px solid rgba(148, 163, 184, 0.65);
       }
@@ -214,6 +215,11 @@
         object-fit: cover;
         display: block;
         transition: transform 0.2s ease, filter 0.2s ease;
+      }
+
+      .interest-media img.fit-contain {
+        object-fit: contain;
+        background: #e5edff; /* shows as letterbox bars if aspect ratio differs */
       }
 
       .interest-media:hover img {
@@ -281,9 +287,13 @@
         <div class="kicker">What I like working on</div>
         <h1 id="page-title" class="title">Research Interests</h1>
         <p class="subtitle">
-          I like questions where brain signals, movement, and hardware meet —
-          and where the end result is something that can actually be used in the
-          real world.
+          I like tinker with problems, find solutions and enjoy the satisfaction
+          of solving them. My research interests have always been in
+          neuroscience and working with the brain, to me, the mind is like the
+          biggest puzzle that many great minds have been trying to solve for
+          centuries. It has always been my dream to understand how the brain
+          works and how we can make use of that to make real products that can
+          be used.
         </p>
       </header>
 
@@ -291,17 +301,30 @@
         <!-- Interest 1 -->
         <section class="interest">
           <div class="interest-content">
-            <h2 class="interest-title">Neural signals</h2>
+            <h2 class="interest-title">Neuroscience & neural interfaces</h2>
+            <p class="interest-tagline">
+              Building pathways for the mind to communicate with machines.
+            </p>
             <p>
-              Neuroscience appeals to me because it sits at the intersection of
-              biology, computation, and engineering—where you can both explain
-              brain function and build systems that interface with it.
+              I’ve been drawn to neuroscience because it sits at the
+              intersection of biology, computation, and engineering. And because
+              it makes the idea of neural interfaces feel tangible. Ever since I
+              was younger, I’ve dreamed of brain-computer interfaces that let
+              intention translate directly into action on a computer.
+            </p>
+            <p>
+              Part of that spark came from the stories I grew up with: the ideas
+              behind
+              <em>The Matrix</em> and novels like
+              <em>Sword Art Online</em> introduced me to the idea and
+              possibilities of BCI. Now that I am older, maybe less on the
+              sci-fi fantasy, and more the possibility that neuroscience and BCI
+              can really transform the way we live.
             </p>
           </div>
           <figure class="interest-media">
-            <!-- replace src with your own image -->
             <img
-              src="docs/main_bg.png"
+              src="main_bg.png"
               alt="Visual of a virtual maze and hippocampal activity"
             />
           </figure>
@@ -312,26 +335,20 @@
           <figure class="interest-media">
             <img
               src="IMU_proj/wear.jpg"
-              alt="Insole-embedded IMU system on a running track"
+              alt="Wearable sensing system in real-world use"
             />
           </figure>
+
           <div class="interest-content">
-            <h2 class="interest-title">Wearable gait sensing with IMUs</h2>
-            <p class="interest-tagline">
-              Making foot-mounted IMUs useful outside the lab.
-            </p>
+            <h2 class="interest-title">Wearables & sensing systems</h2>
             <p>
-              I like building and optimising existing systems that are proposed,
-              then seeing how I could think about ways to improve them, even if
-              its not successful in creating groundbreaking work or
-              revolutionising IMU industry, its give me satisfaction from trying
-              to work out the problem.
+              I like working on wearable systems because I think thats the
+              bridge where concepts and ideas can become reality. Often times I
+              have ideas that seems perfect on paper, but once it's implemented,
+              tested, everything gets messy, complicated, and noisy. Sometimes I
+              like the challenge, but most of the time it can be frustrating.
+              But ultimately seeing it work makes it worth it.
             </p>
-            <ul>
-              <li>Trajectory estimation with ZUPT and Kalman filters.</li>
-              <li>Handling drift and magnetometer issues in the wild.</li>
-              <li>Using gait as a window into ageing and disease.</li>
-            </ul>
           </div>
         </section>
 
@@ -339,7 +356,8 @@
         <section class="interest">
           <figure class="interest-media">
             <img
-              src="IMU_proj/pipelinev2.png"
+              class="fit-contain"
+              src="about/fourier_cat.jpg"
               alt="Code and plots for a signal processing pipeline"
             />
           </figure>
@@ -359,8 +377,7 @@
                 LFP data processing, IMU data processing and EEG data
                 processing.
               </li>
-              <li>Artifact handling and honest quality checks.</li>
-              <li>Reproducible code that other people can actually run.</li>
+              <li>Artifact handling and quality inspections.</li>
             </ul>
           </div>
         </section>
